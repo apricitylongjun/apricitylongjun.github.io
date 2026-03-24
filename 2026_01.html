@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>标准不确定度计算器</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2332;
+    --surface3: #1e293b;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --accent3: #a78bfa;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #1e293b;
+    --radius: 16px;
+    --glow: 0 0 20px rgba(56, 189, 248, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .bg-pattern {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(56,189,248,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(129,140,248,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px 100px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 32px 0 24px;
+  }
+
+  .header-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(56,189,248,0.25);
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text3);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(129,140,248,0.15));
+    color: var(--accent);
+    box-shadow: 0 2px 8px rgba(56,189,248,0.1);
+  }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group:last-child { margin-bottom: 0; }
+
+  .form-label {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 6px;
+    display: block;
+    font-weight: 500;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .form-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+  }
+
+  .form-input::placeholder {
+    color: var(--text3);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+  }
+
+  .form-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* Data chips */
+  .data-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    min-height: 32px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: var(--surface3);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    animation: chipIn 0.2s ease;
+  }
+
+  .chip .remove {
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 14px;
+    margin-left: 2px;
+    line-height: 1;
+  }
+
+  @keyframes chipIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(56,189,248,0.3);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(56,189,248,0.2);
+  }
+
+  .btn-secondary {
+    background: var(--surface3);
+    color: var(--text2);
+    margin-top: 8px;
+  }
+
+  .btn-add {
+    padding: 10px 16px;
+    background: var(--surface3);
+    color: var(--accent);
+    border: 1px dashed rgba(56,189,248,0.3);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Noto Sans SC', sans-serif;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-add:active {
+    background: rgba(56,189,248,0.1);
+  }
+
+  /* Results */
+  .results {
+    background: var(--surface);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    box-shadow: var(--glow);
+    animation: resultIn 0.4s ease;
+  }
+
+  @keyframes resultIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--success);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .result-row:last-child { border-bottom: none; }
+
+  .result-label {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .result-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .result-highlight {
+    background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(129,140,248,0.1));
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  .result-highlight .label {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 4px;
+  }
+
+  .result-highlight .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Formula display */
+  .formula-box {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px;
+    margin: 12px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent3);
+    text-align: center;
+    line-height: 1.8;
+    border: 1px solid rgba(167,139,250,0.15);
+  }
+
+  /* Steps */
+  .step-list {
+    margin-top: 12px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .step-num {
+    width: 22px; height: 22px;
+    background: var(--surface3);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-content {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .step-content .mono {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+  }
+
+  /* B类 select */
+  .form-select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+  }
+
+  .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+  }
+
+  /* Counter */
+  .data-count {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 6px;
+  }
+
+  .data-count span {
+    color: var(--accent);
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Empty state */
+  .empty-hint {
+    text-align: center;
+    padding: 20px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  /* Quick add row */
+  .quick-add {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .quick-add .form-input {
+    flex: 1;
+  }
+
+  .quick-add .btn-icon {
+    width: 46px;
+    height: 46px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s;
+  }
+
+  .quick-add .btn-icon:active {
+    transform: scale(0.92);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--warning);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Info */
+  .info-block {
+    background: rgba(56,189,248,0.05);
+    border: 1px solid rgba(56,189,248,0.1);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+
+  .info-block p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div id="toast" class="toast"></div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-icon">σ</div>
+    <h1>标准不确定度计算器</h1>
+    <p>A类 · B类 · 合成不确定度</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('typeA')">A类不确定度</button>
+    <button class="tab" onclick="switchTab('typeB')">B类不确定度</button>
+    <button class="tab" onclick="switchTab('combined')">合成计算</button>
+  </div>
+
+  <!-- ========== A类不确定度 ========== -->
+  <div id="panel-typeA" class="panel active">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>输入测量数据</div>
+
+      <div class="quick-add">
+        <input type="number" class="form-input" id="dataInput" placeholder="输入单个测量值"
+               inputmode="decimal" enterkeyhint="done"
+               onkeydown="if(event.key==='Enter'){addData();}">
+        <button class="btn-icon" onclick="addData()">+</button>
+      </div>
+
+      <div class="form-hint" style="margin-top:8px">逐个输入测量值，或一次性粘贴多个数据（用空格/逗号分隔）</div>
+
+      <div class="data-count">已输入 <span id="dataCount">0</span> 个数据</div>
+      <div class="data-chips" id="dataChips">
+        <div class="empty-hint" id="emptyHint">暂无数据，请在上方输入</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>公式说明</div>
+      <div class="formula-box">
+        x̄ = (1/n) Σxᵢ<br>
+        S = √[ Σ(xᵢ - x̄)² / (n-1) ]<br>
+        u<sub>A</sub> = S / √n
+      </div>
+      <div class="info-block">
+        <p>• x̄ 为算术平均值<br>
+        • S 为实验标准差（贝塞尔公式）<br>
+        • u<sub>A</sub> 为A类标准不确定度<br>
+        • 自由度 ν = n - 1</p>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calcTypeA()">计算 A 类不确定度</button>
+    <button class="btn btn-secondary" onclick="clearDataA()">清除所有数据</button>
+
+    <div id="resultA"></div>
+  </div>
+
+  <!-- ========== B类不确定度 ========== -->
+  <div id="panel-typeB" class="panel">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>仪器参数</div>
+
+      <div class="form-group">
+        <label class="form-label">仪器误差限 Δ<sub>ins</sub></label>
+        <input type="number" class="form-input" id="deltaIns" placeholder="输入仪器最大允许误差" inputmode="decimal">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">概率分布类型</label>
+        <select class="form-select" id="distType" onchange="updateKInfo()">
+          <option value="uniform">均匀分布（k = √3 ≈ 1.732）</option>
+          <option value="triangular">三角分布（k = √6 ≈ 2.449）</option>
+          <option value="normal2">正态分布 95%（k = 2）</option>
+          <option value="normal3">正态分布 99%（k = 3）</option>
+          <option value="arcsine">反正弦分布（k = √2 ≈ 1.414）</option>
+        </select>
+      </div>
+
+      <div id="kInfo" class="info-block">
+        <p>均匀分布：当无法确定具体分布时，通常假设为均匀分布。<br>
+        u<sub>B</sub> = Δ<sub>ins</sub> / √3</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>公式说明</div>
+      <div class="formula-box">
+        u<sub>B</sub> = Δ<sub>ins</sub> / k
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calcTypeB()">计算 B 类不确定度</button>
+
+    <div id="resultB"></div>
+  </div>
+
+  <!-- ========== 合成不确定度 ========== -->
+  <div id="panel-combined" class="panel">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--success)"></span>合成计算</div>
+
+      <div class="form-group">
+        <label class="form-label">A类标准不确定度 u<sub>A</sub></label>
+        <input type="number" class="form-input" id="inputUA" placeholder="输入 uA 值（或先在A类页计算）" inputmode="decimal">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">B类标准不确定度 u<sub>B</sub></label>
+        <input type="number" class="form-input" id="inputUB" placeholder="输入 uB 值（或先在B类页计算）" inputmode="decimal">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">包含因子 k（通常取 2）</label>
+        <input type="number" class="form-input" id="inputK" placeholder="2" value="2" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>公式说明</div>
+      <div class="formula-box">
+        u<sub>c</sub> = √( u<sub>A</sub>² + u<sub>B</sub>² )<br>
+        U = k · u<sub>c</sub>
+      </div>
+      <div class="info-block">
+        <p>• u<sub>c</sub> 为合成标准不确定度<br>
+        • U 为扩展不确定度<br>
+        • k = 2 时置信概率约 95%<br>
+        • k = 3 时置信概率约 99%</p>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calcCombined()">计算合成不确定度</button>
+
+    <div id="resultC"></div>
+  </div>
+
+</div>
+
+<script>
+// ===== 数据管理 =====
+let measurements = [];
+let lastUA = null;
+let lastUB = null;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function addData() {
+  const input = document.getElementById('dataInput');
+  const raw = input.value.trim();
+  if (!raw) return;
+
+  // 支持空格、逗号、分号分隔的批量输入
+  const parts = raw.split(/[\s,;，；]+/).filter(s => s !== '');
+  let added = 0;
+
+  for (const p of parts) {
+    const v = parseFloat(p);
+    if (!isNaN(v)) {
+      measurements.push(v);
+      added++;
+    }
+  }
+
+  if (added === 0) {
+    showToast('请输入有效数字');
+    return;
+  }
+
+  input.value = '';
+  input.focus();
+  renderChips();
+}
+
+function removeData(index) {
+  measurements.splice(index, 1);
+  renderChips();
+}
+
+function renderChips() {
+  const container = document.getElementById('dataChips');
+  const countEl = document.getElementById('dataCount');
+  const emptyEl = document.getElementById('emptyHint');
+
+  countEl.textContent = measurements.length;
+
+  if (measurements.length === 0) {
+    container.innerHTML = '<div class="empty-hint" id="emptyHint">暂无数据，请在上方输入</div>';
+    return;
+  }
+
+  container.innerHTML = measurements.map((v, i) =>
+    `<span class="chip">${v}<span class="remove" onclick="removeData(${i})">×</span></span>`
+  ).join('');
+}
+
+function clearDataA() {
+  measurements = [];
+  renderChips();
+  document.getElementById('resultA').innerHTML = '';
+}
+
+// ===== Tab切换 =====
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', 
+      (tab === 'typeA' && i === 0) || 
+      (tab === 'typeB' && i === 1) || 
+      (tab === 'combined' && i === 2)
+    );
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ===== A类计算 =====
+function calcTypeA() {
+  const n = measurements.length;
+  if (n < 2) {
+    showToast('至少需要输入 2 个测量数据');
+    return;
+  }
+
+  const mean = measurements.reduce((a, b) => a + b, 0) / n;
+  const sumSqDiff = measurements.reduce((s, x) => s + Math.pow(x - mean, 2), 0);
+  const S = Math.sqrt(sumSqDiff / (n - 1));
+  const uA = S / Math.sqrt(n);
+  const dof = n - 1;
+
+  lastUA = uA;
+  // 自动填入合成页
+  document.getElementById('inputUA').value = uA.toPrecision(6);
+
+  const residuals = measurements.map(x => x - mean);
+
+  document.getElementById('resultA').innerHTML = `
+    <div class="results">
+      <div class="results-title">✓ 计算结果</div>
+
+      <div class="result-row">
+        <span class="result-label">测量次数 n</span>
+        <span class="result-value">${n}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">算术平均值 x̄</span>
+        <span class="result-value">${mean.toPrecision(6)}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">实验标准差 S</span>
+        <span class="result-value">${S.toPrecision(6)}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">自由度 ν</span>
+        <span class="result-value">${dof}</span>
+      </div>
+
+      <div class="result-highlight">
+        <div class="label">A类标准不确定度 u<sub>A</sub></div>
+        <div class="value">${uA.toPrecision(6)}</div>
+      </div>
+
+      <div class="step-list" style="margin-top:16px">
+        <div style="font-size:13px;color:var(--text3);font-weight:500;margin-bottom:8px">计算过程：</div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            平均值 x̄ = Σxᵢ / n = <span class="mono">${mean.toPrecision(6)}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            残差 (xᵢ - x̄)：<br>
+            <span class="mono">${residuals.map(r => r >= 0 ? '+' + r.toPrecision(4) : r.toPrecision(4)).join(', ')}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            Σ(xᵢ - x̄)² = <span class="mono">${sumSqDiff.toPrecision(6)}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            S = √[${sumSqDiff.toPrecision(4)} / ${dof}] = <span class="mono">${S.toPrecision(6)}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            u<sub>A</sub> = ${S.toPrecision(4)} / √${n} = <span class="mono">${uA.toPrecision(6)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ===== B类 =====
+function getKValue() {
+  const dist = document.getElementById('distType').value;
+  switch(dist) {
+    case 'uniform': return Math.sqrt(3);
+    case 'triangular': return Math.sqrt(6);
+    case 'normal2': return 2;
+    case 'normal3': return 3;
+    case 'arcsine': return Math.sqrt(2);
+    default: return Math.sqrt(3);
+  }
+}
+
+function getDistName() {
+  const dist = document.getElementById('distType').value;
+  switch(dist) {
+    case 'uniform': return '均匀分布';
+    case 'triangular': return '三角分布';
+    case 'normal2': return '正态分布(95%)';
+    case 'normal3': return '正态分布(99%)';
+    case 'arcsine': return '反正弦分布';
+    default: return '均匀分布';
+  }
+}
+
+function updateKInfo() {
+  const dist = document.getElementById('distType').value;
+  const el = document.getElementById('kInfo');
+  const descriptions = {
+    'uniform': '均匀分布：当无法确定具体分布时，通常假设为均匀分布。<br>u<sub>B</sub> = Δ<sub>ins</sub> / √3',
+    'triangular': '三角分布：误差在中间值附近出现概率较高时使用。<br>u<sub>B</sub> = Δ<sub>ins</sub> / √6',
+    'normal2': '正态分布(95%)：已知误差服从正态分布，置信水平95%。<br>u<sub>B</sub> = Δ<sub>ins</sub> / 2',
+    'normal3': '正态分布(99%)：已知误差服从正态分布，置信水平99%。<br>u<sub>B</sub> = Δ<sub>ins</sub> / 3',
+    'arcsine': '反正弦分布：周期性变化量（如温度波动）常用。<br>u<sub>B</sub> = Δ<sub>ins</sub> / √2'
+  };
+  el.innerHTML = '<p>' + descriptions[dist] + '</p>';
+}
+
+function calcTypeB() {
+  const delta = parseFloat(document.getElementById('deltaIns').value);
+  if (isNaN(delta) || delta <= 0) {
+    showToast('请输入有效的仪器误差限');
+    return;
+  }
+
+  const k = getKValue();
+  const uB = delta / k;
+  lastUB = uB;
+
+  document.getElementById('inputUB').value = uB.toPrecision(6);
+
+  document.getElementById('resultB').innerHTML = `
+    <div class="results">
+      <div class="results-title">✓ 计算结果</div>
+
+      <div class="result-row">
+        <span class="result-label">仪器误差限 Δ<sub>ins</sub></span>
+        <span class="result-value">${delta}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">分布类型</span>
+        <span class="result-value">${getDistName()}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">包含因子 k</span>
+        <span class="result-value">${k.toPrecision(4)}</span>
+      </div>
+
+      <div class="result-highlight" style="background:linear-gradient(135deg, rgba(129,140,248,0.1), rgba(167,139,250,0.1))">
+        <div class="label">B类标准不确定度 u<sub>B</sub></div>
+        <div class="value" style="color:var(--accent2)">${uB.toPrecision(6)}</div>
+      </div>
+
+      <div class="step-list" style="margin-top:16px">
+        <div style="font-size:13px;color:var(--text3);font-weight:500;margin-bottom:8px">计算过程：</div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            Δ<sub>ins</sub> = <span class="mono">${delta}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            ${getDistName()}，k = <span class="mono">${k.toPrecision(4)}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            u<sub>B</sub> = ${delta} / ${k.toPrecision(4)} = <span class="mono">${uB.toPrecision(6)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ===== 合成 =====
+function calcCombined() {
+  const uA = parseFloat(document.getElementById('inputUA').value);
+  const uB = parseFloat(document.getElementById('inputUB').value);
+  const k = parseFloat(document.getElementById('inputK').value) || 2;
+
+  if (isNaN(uA) || isNaN(uB)) {
+    showToast('请输入 uA 和 uB 的值');
+    return;
+  }
+
+  const uc = Math.sqrt(uA * uA + uB * uB);
+  const U = k * uc;
+
+  const confLevel = k === 2 ? '≈95%' : k === 3 ? '≈99%' : `k=${k}`;
+
+  document.getElementById('resultC').innerHTML = `
+    <div class="results">
+      <div class="results-title" style="color:var(--success)">✓ 计算结果</div>
+
+      <div class="result-row">
+        <span class="result-label">u<sub>A</sub></span>
+        <span class="result-value">${uA.toPrecision(6)}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">u<sub>B</sub></span>
+        <span class="result-value">${uB.toPrecision(6)}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">合成标准不确定度 u<sub>c</sub></span>
+        <span class="result-value">${uc.toPrecision(6)}</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">包含因子 k</span>
+        <span class="result-value">${k}</span>
+      </div>
+
+      <div class="result-highlight" style="background:linear-gradient(135deg, rgba(52,211,153,0.1), rgba(56,189,248,0.1))">
+        <div class="label">扩展不确定度 U（${confLevel}）</div>
+        <div class="value" style="color:var(--success)">${U.toPrecision(6)}</div>
+      </div>
+
+      <div class="step-list" style="margin-top:16px">
+        <div style="font-size:13px;color:var(--text3);font-weight:500;margin-bottom:8px">计算过程：</div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            u<sub>c</sub> = √(u<sub>A</sub>² + u<sub>B</sub>²) = √(${(uA*uA).toPrecision(4)} + ${(uB*uB).toPrecision(4)}) = <span class="mono">${uc.toPrecision(6)}</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            U = k × u<sub>c</sub> = ${k} × ${uc.toPrecision(4)} = <span class="mono">${U.toPrecision(6)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>

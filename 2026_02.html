@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDS 直接数字频率合成 · 原理动画</title>
+<style>
+@import url('https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Share+Tech+Mono&family=Noto+Sans+SC:wght@300;400;700&family=Orbitron:wght@400;700;900&display=swap');
+
+:root {
+  /* 浅色主题变量 */
+  --bg:      #f0f4f8;
+  --panel:   #ffffff;
+  --border:  #d1dbe4;
+  --glow:    #0077b6; /* 深邃蓝 */
+  --glow2:   #009955; /* 护眼绿 */
+  --amber:   #e65c00; /* 深橙色 */
+  --purple:  #8338ec; /* 深紫色 */
+  --red:     #e63946;
+  --dim:     #e2e8f0;
+  --text:    #1d3557; /* 深蓝黑字体 */
+  --muted:   #6c7a89;
+}
+
+/* 提升基础字号，移动端下还会通过 @media 进一步优化 */
+html {
+  font-size: 115%;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans SC', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* 浅色的微妙径向渐变背景 */
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(0,119,182,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(0,153,85,0.03) 0%, transparent 50%);
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+  padding: 24px 30px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.2) 100%);
+  flex-wrap: wrap;
+}
+header h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--glow);
+  letter-spacing: 2px;
+}
+header .sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.clock-badge {
+  margin-left: auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--glow2);
+  background: rgba(0,153,85,0.1);
+  border: 1px solid rgba(0,153,85,0.3);
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+/* ── CONTROLS ────────────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 30px;
+  background: rgba(255,255,255,0.8);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.ctrl-group { display: flex; align-items: center; gap: 8px; }
+.ctrl-group label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: bold;
+}
+.ctrl-group .val {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  color: var(--amber);
+  min-width: 32px;
+  text-align: right;
+  font-weight: bold;
+}
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100px;
+  height: 4px;
+  background: var(--dim);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: var(--amber);
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.sep { width: 1px; height: 30px; background: var(--border); }
+
+.btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  border: 1px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.btn-run  { color: #fff; border-color: var(--glow2); background: var(--glow2); }
+.btn-step { color: var(--glow); border-color: var(--glow); background: rgba(0,119,182,0.1); }
+.btn-reset{ color: var(--red); border-color: var(--red); background: rgba(230,57,70,0.1); }
+.btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn.active { background: #007a44; border-color: #007a44; }
+
+/* ── MAIN LAYOUT ─────────────────────────────────────── */
+.main {
+  padding: 20px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── PIPELINE ────────────────────────────────────────── */
+.pipeline {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr;
+  gap: 0;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+.arrow-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 24px;
+}
+.arrow-svg { width: 24px; height: 20px; transition: transform 0.3s; }
+
+/* ── STAGE CARD ──────────────────────────────────────── */
+.stage {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+.stage.active-stage {
+  border-color: var(--glow);
+  box-shadow: 0 4px 16px rgba(0,119,182,0.15), inset 0 0 0 1px var(--glow);
+}
+.stage-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.stage-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.05rem;
+  color: var(--glow);
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+.stage canvas {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+}
+.stage-info {
+  margin-top: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.stage-info span { color: var(--amber); font-weight: bold; }
+
+/* ── OUTPUT SECTION ──────────────────────────────────── */
+.output-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.output-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+.output-card h3 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.95rem;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.output-card canvas {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+}
+
+/* ── FORMULA BAR ─────────────────────────────────────── */
+.formula-bar {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin: 0 20px 20px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.formula-bar .f-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9rem;
+}
+.formula-bar .f-item label { color: var(--muted); font-size: 0.8rem; }
+.formula-bar .f-item .eq   { color: var(--text); }
+.formula-bar .f-item .num  { color: var(--glow); font-size: 1.15rem; font-weight: bold; }
+.formula-bar .main-formula {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.15rem;
+  color: var(--amber);
+  letter-spacing: 1px;
+  margin-left: auto;
+  font-weight: bold;
+}
+
+/* ── LEGEND ──────────────────────────────────────────── */
+.legend {
+  display: flex;
+  gap: 20px;
+  padding: 10px 20px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+}
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+/* ── 专属水印 / 作者署名签 ───────────────────────────── */
+.author-watermark {
+  position: fixed;
+  bottom: 25px;
+  right: 30px;
+  text-align: right;
+  z-index: 9999;
+  pointer-events: none; /* 穿透点击，不影响操作 */
+  opacity: 0.85;
+  transition: opacity 0.3s;
+}
+.author-watermark:hover {
+  opacity: 1;
+}
+.aw-title {
+  /* 艺术字体栈：优先调用系统行楷、楷体、或者优雅的衬线体 */
+  font-family: 'STXingkai', '华文行楷', 'KaiTi', '楷体', 'Noto Serif SC', serif;
+  font-size: 1.4rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  /* 科技感蓝紫渐变文字效果 */
+  background: linear-gradient(135deg, var(--glow), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 4px 10px rgba(0, 119, 182, 0.15);
+  margin-bottom: 2px;
+}
+.aw-sub {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.65rem; /* 极小字 */
+  color: #8a9ba8;
+  letter-spacing: 2px;
+}
+
+/* ── 手机端自适应排版 (重点) ───────────────────────── */
+@media (max-width: 900px) {
+  html { font-size: 120%; } 
+  header { flex-direction: column; gap: 5px; }
+  .clock-badge { margin-left: 0; margin-top: 10px; }
+  
+  .controls { justify-content: center; gap: 15px; }
+  .sep { display: none; } 
+  
+  .formula-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .formula-bar .main-formula { margin-left: 0; margin-top: 10px; }
+  
+  .pipeline {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 5px;
+  }
+  .arrow-col { padding: 8px 0; }
+  .arrow-svg { transform: rotate(90deg); }
+  
+  .output-section { grid-template-columns: 1fr; }
+  
+  .legend { flex-direction: column; gap: 10px; }
+  .legend .legend-item:last-child { margin-left: 0 !important; }
+
+  /* 手机端水印样式调整：取消绝对定位，放在页面最底部居中 */
+  .author-watermark {
+    position: static;
+    text-align: center;
+    margin-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DDS</h1>
+  <span class="sub">直接数字频率合成 · 原理动画</span>
+  <div class="clock-badge" id="clockBadge">CLK: 0</div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <label>频率字 K</label>
+    <input type="range" id="sliderK" min="1" max="12" value="3" step="1">
+    <div class="val" id="valK">3</div>
+  </div>
+  <div class="sep"></div>
+  <div class="ctrl-group">
+    <label>位数 N</label>
+    <input type="range" id="sliderN" min="4" max="6" value="5" step="1">
+    <div class="val" id="valN">5</div>
+  </div>
+  <div class="sep"></div>
+  <div class="ctrl-group">
+    <label>速度</label>
+    <input type="range" id="sliderSpeed" min="1" max="10" value="4" step="1">
+    <div class="val" id="valSpeed">4</div>
+  </div>
+  <div class="sep"></div>
+  <button class="btn btn-run" id="btnRun">▶ 运行</button>
+  <button class="btn btn-step" id="btnStep">⏭ 单步</button>
+  <button class="btn btn-reset" id="btnReset">↺ 重置</button>
+</div>
+
+<div style="max-width:1400px;margin:0 auto 0;">
+  <div class="formula-bar">
+    <div class="f-item"><label>相位累加</label><div class="eq">ACC</div><div class="num" id="fAcc">0</div></div>
+    <div class="f-item"><label>ROM地址</label><div class="eq">ADDR</div><div class="num" id="fAddr">0</div></div>
+    <div class="f-item"><label>幅度码</label><div class="eq">AMP</div><div class="num" id="fAmp">128</div></div>
+    <div class="f-item"><label>输出电压</label><div class="eq">V</div><div class="num" id="fVolt">0.00V</div></div>
+    <div class="main-formula">f<sub>out</sub> = K × f<sub>clk</sub> / 2<sup>N</sup></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="pipeline">
+
+    <div class="stage" id="stageAcc">
+      <div class="stage-label">STAGE 01</div>
+      <div class="stage-title">相位累加器</div>
+      <canvas id="canvasAcc" height="140"></canvas>
+      <div class="stage-info">
+        ACC ← ACC + <span id="infoK">3</span><br>
+        溢出于 2<sup>N</sup> = <span id="info2N">32</span><br>
+        当前: <span id="infoAcc">0</span> / <span id="infoMax">31</span>
+      </div>
+    </div>
+
+    <div class="arrow-col">
+      <svg class="arrow-svg" viewBox="0 0 24 20">
+        <polyline points="2,10 18,10 14,5 18,10 14,15" fill="none" stroke="#a0b0c0" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="stage" id="stageROM">
+      <div class="stage-label">STAGE 02</div>
+      <div class="stage-title">波形 ROM</div>
+      <canvas id="canvasROM" height="140"></canvas>
+      <div class="stage-info">
+        地址: <span id="infoAddr">0</span><br>
+        输出: <span id="infoRomOut">128</span> (8-bit)<br>
+        正弦查找表
+      </div>
+    </div>
+
+    <div class="arrow-col">
+      <svg class="arrow-svg" viewBox="0 0 24 20">
+        <polyline points="2,10 18,10 14,5 18,10 14,15" fill="none" stroke="#a0b0c0" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="stage" id="stageDAC">
+      <div class="stage-label">STAGE 03</div>
+      <div class="stage-title">DAC 数模转换</div>
+      <canvas id="canvasDAC" height="140"></canvas>
+      <div class="stage-info">
+        输入: <span id="infoDacIn">128</span> / 255<br>
+        输出: <span id="infoDacOut">0.00</span> V<br>
+        阶梯波形
+      </div>
+    </div>
+
+    <div class="arrow-col">
+      <svg class="arrow-svg" viewBox="0 0 24 20">
+        <polyline points="2,10 18,10 14,5 18,10 14,15" fill="none" stroke="#a0b0c0" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="stage" id="stageLPF">
+      <div class="stage-label">STAGE 04</div>
+      <div class="stage-title">低通滤波器</div>
+      <canvas id="canvasLPF" height="140"></canvas>
+      <div class="stage-info">
+        滤除高次谐波<br>
+        截止频率: f<sub>clk</sub>/2<br>
+        输出: <span id="infoLpfOut">正弦波</span>
+      </div>
+    </div>
+
+  </div><div class="output-section">
+    <div class="output-card">
+      <h3>DAC OUTPUT — 阶梯波（未滤波）</h3>
+      <canvas id="canvasStaircase" height="140"></canvas>
+    </div>
+    <div class="output-card">
+      <h3>LPF OUTPUT — 平滑正弦波</h3>
+      <canvas id="canvasSine" height="140"></canvas>
+    </div>
+  </div>
+
+</div><div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#0077b6"></div>相位/地址</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e65c00"></div>幅度数据</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#009955"></div>模拟输出</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8338ec"></div>滤波后输出</div>
+  <div class="legend-item" style="margin-left:auto; color:#6c7a89;">每格 = 1 CLK周期 | ROM = 2ᴺ个点</div>
+</div>
+
+<div class="author-watermark">
+  <div class="aw-title">湖南师范大学医工交叉实验室</div>
+  <div class="aw-sub">作者：龙俊</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  DDS ENGINE
+// ════════════════════════════════════════════════════════
+
+let K = 3, N = 5, MAXACC, ROM_SIZE;
+let acc = 0, clk = 0;
+let running = false;
+let animTimer = null;
+let activeStage = 0; 
+
+let dacHistory = [];
+let lpfHistory = [];
+let lpfSmooth = 128;
+const HIST_LEN = 150; 
+
+function initROM() {
+  MAXACC = Math.pow(2, N);
+  ROM_SIZE = MAXACC;
+  window.ROM = [];
+  for (let i = 0; i < ROM_SIZE; i++) {
+    ROM[i] = Math.round(127.5 + 127.5 * Math.sin(2 * Math.PI * i / ROM_SIZE));
+  }
+}
+
+function getAddr() { return acc % ROM_SIZE; }
+function romLookup(addr) { return ROM[addr]; }
+function dacVoltage(val) { return ((val / 255) * 5.0 - 2.5); }
+
+function reset() {
+  acc = 0; clk = 0; activeStage = 0;
+  dacHistory = new Array(HIST_LEN).fill(128);
+  lpfHistory = new Array(HIST_LEN).fill(0);
+  lpfSmooth  = 128;
+  updateDisplays();
+  drawAll();
+}
+
+function step() {
+  clk++;
+  activeStage = 1;
+  acc = (acc + K) % MAXACC;
+
+  let addr = getAddr();
+  let amp  = romLookup(addr);
+  activeStage = 2;
+
+  activeStage = 3;
+  let v = dacVoltage(amp);
+
+  activeStage = 4;
+  const alpha = 0.25;
+  lpfSmooth = lpfSmooth * (1 - alpha) + amp * alpha;
+
+  dacHistory.push(amp);
+  if (dacHistory.length > HIST_LEN) dacHistory.shift();
+  lpfHistory.push(lpfSmooth);
+  if (lpfHistory.length > HIST_LEN) lpfHistory.shift();
+
+  updateDisplays();
+  drawAll();
+}
+
+function updateDisplays() {
+  const addr = getAddr();
+  const amp  = romLookup(addr);
+  const v    = dacVoltage(amp);
+
+  document.getElementById('clockBadge').textContent = `CLK: ${clk}`;
+  document.getElementById('fAcc').textContent   = acc;
+  document.getElementById('fAddr').textContent  = addr;
+  document.getElementById('fAmp').textContent   = amp;
+  document.getElementById('fVolt').textContent  = v.toFixed(2) + 'V';
+  document.getElementById('infoK').textContent  = K;
+  document.getElementById('info2N').textContent = MAXACC;
+  document.getElementById('infoAcc').textContent= acc;
+  document.getElementById('infoMax').textContent= MAXACC - 1;
+  document.getElementById('infoAddr').textContent    = addr;
+  document.getElementById('infoRomOut').textContent  = amp;
+  document.getElementById('infoDacIn').textContent   = amp;
+  document.getElementById('infoDacOut').textContent  = v.toFixed(2);
+  document.getElementById('valK').textContent        = K;
+  document.getElementById('valN').textContent        = N;
+
+  ['stageAcc','stageROM','stageDAC','stageLPF'].forEach((id, i) => {
+    document.getElementById(id).classList.toggle('active-stage', activeStage === i+1);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+//  DRAWING (Updated for Light Theme)
+// ════════════════════════════════════════════════════════
+
+function dpr(canvas) {
+  const r = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth;
+  const h = canvas.offsetHeight || parseInt(canvas.getAttribute('height'));
+  if (canvas.width !== w * r || canvas.height !== h * r) {
+    canvas.width  = w * r;
+    canvas.height = h * r;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(r, 0, 0, r, 0, 0);
+  return [ctx, w, h];
+}
+
+const COLORS = {
+  glow:   '#0077b6',
+  amber:  '#e65c00',
+  green:  '#009955',
+  purple: '#8338ec',
+  red:    '#e63946',
+  dim:    '#e2e8f0',
+  bg:     '#f8fafc', 
+  grid:   '#cbd5e1', 
+  text:   '#1d3557', 
+  muted:  '#64748b',
+};
+
+// ── ACCUMULATOR CANVAS ────────────────────────────────
+function drawAcc() {
+  const canvas = document.getElementById('canvasAcc');
+  const [ctx, W, H] = dpr(canvas);
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W * 0.42, cy = H * 0.5, r = Math.min(W * 0.3, H * 0.42);
+  const total = MAXACC;
+  const segAngle = (2 * Math.PI) / total;
+  for (let i = 0; i < total; i++) {
+    const start = -Math.PI/2 + i * segAngle;
+    const end   = start + segAngle - 0.02;
+    const isActive = i === acc;
+    const isPassed = i < acc;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = isActive ? COLORS.amber :
+                   isPassed  ? 'rgba(0,119,182,0.15)' :
+                               'rgba(0,0,0,0.03)';
+    ctx.fill();
+    if (isActive) {
+      ctx.strokeStyle = COLORS.amber;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  // Center hole
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.38, 0, Math.PI * 2);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fill();
+  ctx.strokeStyle = '#a0b0c0';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.fillStyle = COLORS.amber;
+  ctx.font = 'bold 16px "Share Tech Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText(acc, cx, cy - 3);
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '11px "Share Tech Mono"';
+  ctx.fillText(`/ ${MAXACC}`, cx, cy + 13);
+
+  // Pointer
+  const angle = -Math.PI/2 + (acc / MAXACC) * 2 * Math.PI;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + r * 0.85 * Math.cos(angle), cy + r * 0.85 * Math.sin(angle));
+  ctx.strokeStyle = COLORS.amber;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Bits register
+  const rx = W * 0.78, ry = H * 0.18, rw = W * 0.18, rh = H * 0.64;
+  const bits = N;
+
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '11px "Share Tech Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${bits}-bit`, rx, ry - 6);
+
+  const bh = rh / bits;
+  for (let b = bits - 1; b >= 0; b--) {
+    const bit = (acc >> b) & 1;
+    const by = ry + (bits - 1 - b) * bh;
+    ctx.fillStyle = bit ? COLORS.amber : 'rgba(0,0,0,0.04)';
+    ctx.fillRect(rx - rw/2, by + 1, rw, bh - 2);
+    ctx.fillStyle = bit ? '#fff' : COLORS.text;
+    ctx.font = `bold ${Math.min(12, bh*0.75)}px "Share Tech Mono"`;
+    ctx.textAlign = 'center';
+    ctx.fillText(bit, rx, by + bh/2 + 4);
+  }
+  ctx.strokeStyle = '#a0b0c0';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(rx - rw/2, ry, rw, rh);
+}
+
+// ── ROM CANVAS ────────────────────────────────────────
+function drawROM() {
+  const canvas = document.getElementById('canvasROM');
+  const [ctx, W, H] = dpr(canvas);
+  ctx.clearRect(0, 0, W, H);
+
+  const addr = getAddr();
+  const n = ROM_SIZE;
+  const barW = (W - 4) / n;
+  const maxH = H - 22;
+  const baseY = H - 8;
+
+  for (let i = 0; i < n; i++) {
+    const val = ROM[i];
+    const bh  = (val / 255) * maxH;
+    const x   = 2 + i * barW;
+    const isActive = i === addr;
+
+    const hue = (i / n) * 180 + 180;
+    ctx.fillStyle = isActive ? COLORS.amber :
+                    `hsla(${hue},60%,65%,0.7)`;
+    ctx.fillRect(x, baseY - bh, Math.max(1, barW - 0.5), bh);
+
+    if (isActive) {
+      ctx.fillStyle = COLORS.amber;
+      ctx.fillRect(x, baseY - bh, Math.max(2, barW - 0.5), bh);
+    }
+  }
+
+  const ax = 2 + addr * barW + barW/2;
+  ctx.beginPath();
+  ctx.moveTo(ax, 4);
+  ctx.lineTo(ax, baseY - (ROM[addr]/255)*maxH - 2);
+  ctx.strokeStyle = COLORS.amber;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = COLORS.amber;
+  ctx.font = 'bold 11px "Share Tech Mono"';
+  ctx.textAlign = 'center';
+  const labelX = Math.max(25, Math.min(W-25, ax));
+  ctx.fillText(`${addr}→${ROM[addr]}`, labelX, 12);
+
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const x2 = 2 + i * barW + barW/2;
+    const y2 = baseY - (ROM[i]/255)*maxH;
+    i === 0 ? ctx.moveTo(x2, y2) : ctx.lineTo(x2, y2);
+  }
+  ctx.strokeStyle = 'rgba(0,119,182,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+// ── DAC CANVAS ────────────────────────────────────────
+function drawDAC() {
+  const canvas = document.getElementById('canvasDAC');
+  const [ctx, W, H] = dpr(canvas);
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = 12;
+  const innerW = W - pad*2;
+  const innerH = H - pad*2;
+  const midY   = pad + innerH * 0.5;
+
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (i/4)*innerH;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W-pad, y); ctx.stroke();
+  }
+
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '10px "Share Tech Mono"';
+  ctx.textAlign = 'left';
+  const labels = ['+2.5V','0V','-2.5V'];
+  [0, 0.5, 1].forEach((t, i) => {
+    ctx.fillText(labels[i], 2, pad + t*innerH + 4);
+  });
+
+  ctx.beginPath();
+  ctx.moveTo(pad + 16, midY);
+  ctx.lineTo(W - pad, midY);
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const showN = Math.min(dacHistory.length, 60);
+  const step  = innerW / showN;
+  const startIdx = dacHistory.length - showN;
+
+  ctx.beginPath();
+  for (let i = 0; i < showN; i++) {
+    const val = dacHistory[startIdx + i];
+    const x = pad + 24 + i * step;
+    const y = pad + (1 - val/255) * innerH;
+    if (i === 0) ctx.moveTo(x, y);
+    else { ctx.lineTo(x, y); }
+    if (i < showN - 1) {
+      const ny = pad + (1 - dacHistory[startIdx+i+1]/255)*innerH;
+      ctx.lineTo(x + step, y);
+      ctx.lineTo(x + step, ny);
+    }
+  }
+  ctx.strokeStyle = COLORS.amber;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  if (dacHistory.length > 0) {
+    const curVal = dacHistory[dacHistory.length-1];
+    const cy2 = pad + (1 - curVal/255) * innerH;
+    ctx.beginPath();
+    ctx.arc(W - pad + 6, cy2, 4, 0, Math.PI*2);
+    ctx.fillStyle = COLORS.amber;
+    ctx.fill();
+  }
+}
+
+// ── LPF CANVAS ────────────────────────────────────────
+function drawLPF() {
+  const canvas = document.getElementById('canvasLPF');
+  const [ctx, W, H] = dpr(canvas);
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = 12;
+  const innerW = W - pad*2 - 16;
+  const innerH = H - pad*2;
+
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (i/4)*innerH;
+    ctx.beginPath(); ctx.moveTo(pad+16, y); ctx.lineTo(W-pad, y); ctx.stroke();
+  }
+
+  ctx.save();
+  const tfX = W - 46, tfY = 6, tfW = 40, tfH = 24;
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.fillRect(tfX, tfY, tfW, tfH);
+  ctx.beginPath();
+  for (let px = 0; px <= tfW; px++) {
+    const f = px / tfW;
+    const mag = 1 / (1 + Math.pow(f * 4, 2));
+    const y2 = tfY + tfH - mag * tfH * 0.9;
+    px === 0 ? ctx.moveTo(tfX+px, y2) : ctx.lineTo(tfX+px, y2);
+  }
+  ctx.strokeStyle = COLORS.purple;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(131,56,236,0.3)';
+  ctx.strokeRect(tfX, tfY, tfW, tfH);
+  ctx.fillStyle = COLORS.text;
+  ctx.font = 'bold 9px "Share Tech Mono"';
+  ctx.textAlign = 'left';
+  ctx.fillText('LPF', tfX+2, tfY+tfH+10);
+  ctx.restore();
+
+  const showN = Math.min(lpfHistory.length, 60);
+  const step  = innerW / showN;
+  const startIdx = lpfHistory.length - showN;
+
+  ctx.beginPath();
+  for (let i = 0; i < showN; i++) {
+    const val = lpfHistory[startIdx + i];
+    const x = pad + 16 + i * step;
+    const y = pad + (1 - val/255) * innerH;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = COLORS.purple;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '12px "Share Tech Mono"';
+  ctx.textAlign = 'left';
+  ['+','-'].forEach((s, i) => {
+    ctx.fillText(s, 4, pad + i*(innerH) + 4 + (i?0:-6));
+  });
+
+  if (lpfHistory.length > 0) {
+    const curVal = lpfHistory[lpfHistory.length-1];
+    const cy2 = pad + (1 - curVal/255) * innerH;
+    ctx.beginPath();
+    ctx.arc(W - pad - 2, cy2, 4.5, 0, Math.PI*2);
+    ctx.fillStyle = COLORS.purple;
+    ctx.fill();
+  }
+}
+
+// ── STAIRCASE OUTPUT ──────────────────────────────────
+function drawStaircase() {
+  const canvas = document.getElementById('canvasStaircase');
+  const [ctx, W, H] = dpr(canvas);
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = { l:40, r:15, t:15, b:15 };
+  const innerW = W - pad.l - pad.r;
+  const innerH = H - pad.t - pad.b;
+  const midY   = pad.t + innerH*0.5;
+
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (i/4)*innerH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W-pad.r, y); ctx.stroke();
+  }
+  for (let i = 0; i <= 8; i++) {
+    const x = pad.l + (i/8)*innerW;
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H-pad.b); ctx.stroke();
+  }
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H-pad.b); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, midY); ctx.lineTo(W-pad.r, midY); ctx.stroke();
+
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '11px "Share Tech Mono"';
+  ctx.textAlign = 'right';
+  ['+2.5V','0V','-2.5V'].forEach((t, i) => {
+    ctx.fillText(t, pad.l-6, pad.t + (i/2)*innerH + 4);
+  });
+
+  if (dacHistory.length < 2) return;
+
+  const showN = Math.min(dacHistory.length, HIST_LEN);
+  const step  = innerW / showN;
+  const startIdx = dacHistory.length - showN;
+
+  ctx.beginPath();
+  for (let i = 0; i < showN; i++) {
+    const val = dacHistory[startIdx + i];
+    const x = pad.l + i * step;
+    const y = pad.t + (1 - val/255) * innerH;
+    if (i === 0) { ctx.moveTo(x, y); continue; }
+    ctx.lineTo(x + step, dacHistory[startIdx+i-1] !== undefined ?
+      pad.t + (1 - dacHistory[startIdx+i-1]/255)*innerH : y);
+    ctx.lineTo(x + step, y);
+  }
+  ctx.strokeStyle = COLORS.amber;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const cycleLen = MAXACC / K;
+  ctx.beginPath();
+  for (let i = 0; i < showN; i++) {
+    const t = (startIdx + i) / cycleLen;
+    const y = midY - Math.sin(t * 2 * Math.PI) * innerH * 0.45;
+    const x = pad.l + i * step;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = 'rgba(0,119,182,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = COLORS.amber;
+  ctx.font = 'bold 12px "Share Tech Mono"';
+  ctx.textAlign = 'left';
+  const frat = K > 0 ? `K=${K}, 每周期 ${(MAXACC/K).toFixed(1)} 点` : '';
+  ctx.fillText(frat, pad.l + 8, pad.t + 16);
+}
+
+// ── SINE OUTPUT ───────────────────────────────────────
+function drawSineOutput() {
+  const canvas = document.getElementById('canvasSine');
+  const [ctx, W, H] = dpr(canvas);
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = { l:40, r:15, t:15, b:15 };
+  const innerW = W - pad.l - pad.r;
+  const innerH = H - pad.t - pad.b;
+  const midY   = pad.t + innerH*0.5;
+
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (i/4)*innerH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W-pad.r, y); ctx.stroke();
+  }
+  for (let i = 0; i <= 8; i++) {
+    const x = pad.l + (i/8)*innerW;
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H-pad.b); ctx.stroke();
+  }
+  
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H-pad.b); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, midY); ctx.lineTo(W-pad.r, midY); ctx.stroke();
+
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '11px "Share Tech Mono"';
+  ctx.textAlign = 'right';
+  ['+2.5V','0V','-2.5V'].forEach((t, i) => {
+    ctx.fillText(t, pad.l-6, pad.t + (i/2)*innerH + 4);
+  });
+
+  if (lpfHistory.length < 2) return;
+
+  const showN = Math.min(lpfHistory.length, HIST_LEN);
+  const step  = innerW / showN;
+  const startIdx = lpfHistory.length - showN;
+
+  ctx.beginPath();
+  ctx.moveTo(pad.l, midY);
+  for (let i = 0; i < showN; i++) {
+    const val = lpfHistory[startIdx + i];
+    const x = pad.l + i * step;
+    const y = pad.t + (1 - val/255) * innerH;
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(pad.l + showN*step, midY);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.t, 0, H-pad.b);
+  grad.addColorStop(0,   'rgba(131,56,236,0.15)');
+  grad.addColorStop(0.5, 'rgba(131,56,236,0.02)');
+  grad.addColorStop(1,   'rgba(131,56,236,0.15)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  for (let i = 0; i < showN; i++) {
+    const val = lpfHistory[startIdx + i];
+    const x = pad.l + i * step;
+    const y = pad.t + (1 - val/255) * innerH;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = COLORS.purple;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.fillStyle = COLORS.purple;
+  ctx.font = 'bold 12px "Share Tech Mono"';
+  ctx.textAlign = 'left';
+  ctx.fillText(`f_out ∝ K=${K}  (${MAXACC/K > 1 ? (MAXACC/K).toFixed(1) : '?'} samp/cycle)`, pad.l+8, pad.t+16);
+}
+
+function drawAll() {
+  drawAcc();
+  drawROM();
+  drawDAC();
+  drawLPF();
+  drawStaircase();
+  drawSineOutput();
+}
+
+// ════════════════════════════════════════════════════════
+//  ANIMATION LOOP
+// ════════════════════════════════════════════════════════
+let frameCount = 0;
+function runLoop() {
+  if (!running) return;
+  frameCount++;
+  const speed = parseInt(document.getElementById('sliderSpeed').value);
+  const interval = Math.max(1, 12 - speed);
+  if (frameCount % interval === 0) step();
+  animTimer = requestAnimationFrame(runLoop);
+}
+
+function toggleRun() {
+  running = !running;
+  const btn = document.getElementById('btnRun');
+  btn.textContent = running ? '⏸ 暂停' : '▶ 运行';
+  btn.classList.toggle('active', running);
+  if (running) runLoop();
+}
+
+// ════════════════════════════════════════════════════════
+//  EVENT LISTENERS
+// ════════════════════════════════════════════════════════
+document.getElementById('btnRun').addEventListener('click', toggleRun);
+document.getElementById('btnStep').addEventListener('click', () => { if (!running) step(); });
+document.getElementById('btnReset').addEventListener('click', () => {
+  running = false;
+  document.getElementById('btnRun').textContent = '▶ 运行';
+  document.getElementById('btnRun').classList.remove('active');
+  if (animTimer) cancelAnimationFrame(animTimer);
+  reset();
+});
+
+document.getElementById('sliderK').addEventListener('input', e => {
+  K = parseInt(e.target.value);
+  document.getElementById('valK').textContent = K;
+  updateDisplays();
+  drawAll();
+});
+
+document.getElementById('sliderN').addEventListener('input', e => {
+  N = parseInt(e.target.value);
+  document.getElementById('valN').textContent = N;
+  initROM();
+  reset();
+});
+
+document.getElementById('sliderSpeed').addEventListener('input', e => {
+  document.getElementById('valSpeed').textContent = e.target.value;
+});
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(drawAll, 100);
+});
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+initROM();
+reset();
+
+setTimeout(() => {
+  toggleRun();
+}, 600);
+</script>
+</body>
+</html>
