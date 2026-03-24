@@ -7,24 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e1a;
-    --surface: #111827;
-    --surface2: #1a2332;
-    --surface3: #1e293b;
-    --accent: #38bdf8;
-    --accent2: #818cf8;
-    --accent3: #a78bfa;
-    --success: #34d399;
-    --warning: #fbbf24;
-    --text: #e2e8f0;
-    --text2: #94a3b8;
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #f1f5f9;
+    --surface3: #e8edf2;
+    --accent: #0077b6;
+    --accent2: #5e60ce;
+    --accent3: #7b2ff7;
+    --success: #059669;
+    --warning: #d97706;
+    --text: #1e293b;
+    --text2: #475569;
     --text3: #64748b;
-    --border: #1e293b;
+    --border: #d1dbe4;
     --radius: 16px;
-    --glow: 0 0 20px rgba(56, 189, 248, 0.15);
+    --glow: 0 0 20px rgba(0, 119, 182, 0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 110%;
+  }
 
   body {
     font-family: 'Noto Sans SC', sans-serif;
@@ -33,88 +37,82 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-  }
-
-  .bg-pattern {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      radial-gradient(ellipse at 20% 0%, rgba(56,189,248,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, rgba(129,140,248,0.06) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(0,119,182,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(94,96,206,0.04) 0%, transparent 50%);
   }
 
   .app {
     position: relative;
     z-index: 1;
-    max-width: 480px;
+    max-width: 520px;
     margin: 0 auto;
-    padding: 0 16px 100px;
+    padding: 0 20px 120px;
   }
 
   /* Header */
   .header {
     text-align: center;
-    padding: 32px 0 24px;
+    padding: 36px 0 28px;
   }
 
   .header-icon {
-    width: 48px; height: 48px;
+    width: 56px; height: 56px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 14px;
+    border-radius: 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 20px rgba(56,189,248,0.25);
+    font-size: 26px;
+    color: #fff;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(0,119,182,0.2);
   }
 
   .header h1 {
-    font-size: 22px;
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text);
   }
 
   .header p {
-    font-size: 13px;
+    font-size: 0.9rem;
     color: var(--text3);
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
   /* Tabs */
   .tabs {
     display: flex;
     background: var(--surface);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 20px;
+    border-radius: 14px;
+    padding: 5px;
+    margin-bottom: 24px;
     border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   }
 
   .tab {
     flex: 1;
-    padding: 10px 0;
+    padding: 12px 0;
     text-align: center;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text3);
-    border-radius: 9px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     border: none;
     background: transparent;
+    font-family: 'Noto Sans SC', sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
 
   .tab.active {
-    background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(129,140,248,0.15));
+    background: linear-gradient(135deg, rgba(0,119,182,0.12), rgba(94,96,206,0.12));
     color: var(--accent);
-    box-shadow: 0 2px 8px rgba(56,189,248,0.1);
+    box-shadow: 0 2px 8px rgba(0,119,182,0.1);
   }
 
   /* Panels */
@@ -131,49 +129,50 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   }
 
   .card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text2);
-    margin-bottom: 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
 
   .card-title .dot {
-    width: 8px; height: 8px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--accent);
   }
 
   /* Form */
   .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .form-group:last-child { margin-bottom: 0; }
 
   .form-label {
-    font-size: 12px;
-    color: var(--text3);
-    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: var(--text2);
+    margin-bottom: 8px;
     display: block;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .form-input {
     width: 100%;
-    padding: 12px 14px;
+    padding: 14px 16px;
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     color: var(--text);
-    font-size: 15px;
+    font-size: 1rem;
     font-family: 'JetBrains Mono', monospace;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -182,48 +181,50 @@
 
   .form-input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+    box-shadow: 0 0 0 3px rgba(0,119,182,0.1);
   }
 
   .form-input::placeholder {
     color: var(--text3);
     font-family: 'Noto Sans SC', sans-serif;
-    font-size: 13px;
+    font-size: 0.85rem;
   }
 
   .form-hint {
-    font-size: 11px;
+    font-size: 0.78rem;
     color: var(--text3);
-    margin-top: 4px;
-    line-height: 1.5;
+    margin-top: 6px;
+    line-height: 1.6;
   }
 
   /* Data chips */
   .data-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
-    min-height: 32px;
+    gap: 8px;
+    margin-top: 10px;
+    min-height: 36px;
   }
 
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 5px 10px;
-    background: var(--surface3);
-    border-radius: 8px;
-    font-size: 13px;
+    gap: 6px;
+    padding: 7px 12px;
+    background: rgba(0,119,182,0.08);
+    border: 1px solid rgba(0,119,182,0.15);
+    border-radius: 10px;
+    font-size: 0.9rem;
     font-family: 'JetBrains Mono', monospace;
     color: var(--accent);
+    font-weight: 500;
     animation: chipIn 0.2s ease;
   }
 
   .chip .remove {
     cursor: pointer;
     color: var(--text3);
-    font-size: 14px;
+    font-size: 16px;
     margin-left: 2px;
     line-height: 1;
   }
@@ -236,11 +237,11 @@
   /* Buttons */
   .btn {
     width: 100%;
-    padding: 14px;
+    padding: 16px;
     border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
     font-family: 'Noto Sans SC', sans-serif;
     cursor: pointer;
     transition: all 0.2s;
@@ -250,48 +251,48 @@
   .btn-primary {
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     color: #fff;
-    box-shadow: 0 4px 15px rgba(56,189,248,0.3);
+    box-shadow: 0 4px 15px rgba(0,119,182,0.25);
   }
 
   .btn-primary:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(56,189,248,0.2);
+    box-shadow: 0 2px 8px rgba(0,119,182,0.15);
   }
 
   .btn-secondary {
     background: var(--surface3);
     color: var(--text2);
-    margin-top: 8px;
+    margin-top: 10px;
   }
 
   .btn-add {
-    padding: 10px 16px;
-    background: var(--surface3);
+    padding: 12px 18px;
+    background: var(--surface);
     color: var(--accent);
-    border: 1px dashed rgba(56,189,248,0.3);
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 500;
+    border: 1px dashed rgba(0,119,182,0.35);
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 600;
     cursor: pointer;
     font-family: 'Noto Sans SC', sans-serif;
     transition: all 0.2s;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 12px;
     -webkit-tap-highlight-color: transparent;
   }
 
   .btn-add:active {
-    background: rgba(56,189,248,0.1);
+    background: rgba(0,119,182,0.06);
   }
 
   /* Results */
   .results {
     background: var(--surface);
-    border: 1px solid rgba(56,189,248,0.2);
+    border: 1px solid rgba(0,119,182,0.2);
     border-radius: var(--radius);
-    padding: 20px;
-    margin-top: 16px;
-    box-shadow: var(--glow);
+    padding: 22px;
+    margin-top: 18px;
+    box-shadow: 0 4px 16px rgba(0,119,182,0.08);
     animation: resultIn 0.4s ease;
   }
 
@@ -301,158 +302,162 @@
   }
 
   .results-title {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 700;
     color: var(--success);
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .result-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
   }
 
   .result-row:last-child { border-bottom: none; }
 
   .result-label {
-    font-size: 13px;
+    font-size: 0.9rem;
     color: var(--text2);
+    font-weight: 500;
   }
 
   .result-value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     color: var(--text);
   }
 
   .result-highlight {
-    background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(129,140,248,0.1));
-    border-radius: 10px;
-    padding: 14px;
-    margin-top: 12px;
+    background: linear-gradient(135deg, rgba(0,119,182,0.08), rgba(94,96,206,0.08));
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 14px;
     text-align: center;
   }
 
   .result-highlight .label {
-    font-size: 12px;
+    font-size: 0.85rem;
     color: var(--text3);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    font-weight: 500;
   }
 
   .result-highlight .value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--accent);
   }
 
   /* Formula display */
   .formula-box {
     background: var(--surface2);
-    border-radius: 10px;
-    padding: 14px;
-    margin: 12px 0;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 14px 0;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 0.9rem;
     color: var(--accent3);
     text-align: center;
-    line-height: 1.8;
-    border: 1px solid rgba(167,139,250,0.15);
+    line-height: 2;
+    border: 1px solid rgba(123,47,247,0.1);
   }
 
   /* Steps */
   .step-list {
-    margin-top: 12px;
+    margin-top: 14px;
   }
 
   .step-item {
     display: flex;
-    gap: 10px;
-    padding: 8px 0;
+    gap: 12px;
+    padding: 10px 0;
   }
 
   .step-num {
-    width: 22px; height: 22px;
-    background: var(--surface3);
-    border-radius: 6px;
+    width: 26px; height: 26px;
+    background: rgba(0,119,182,0.08);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     color: var(--accent);
     flex-shrink: 0;
-    margin-top: 1px;
+    margin-top: 2px;
   }
 
   .step-content {
-    font-size: 13px;
+    font-size: 0.88rem;
     color: var(--text2);
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
   .step-content .mono {
     font-family: 'JetBrains Mono', monospace;
     color: var(--accent);
+    font-weight: 600;
   }
 
   /* B类 select */
   .form-select {
     width: 100%;
-    padding: 12px 14px;
+    padding: 14px 16px;
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     color: var(--text);
-    font-size: 14px;
+    font-size: 0.9rem;
     font-family: 'Noto Sans SC', sans-serif;
     outline: none;
     -webkit-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 14px center;
+    background-position: right 16px center;
     cursor: pointer;
   }
 
   .form-select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+    box-shadow: 0 0 0 3px rgba(0,119,182,0.1);
   }
 
   /* Counter */
   .data-count {
-    font-size: 12px;
+    font-size: 0.82rem;
     color: var(--text3);
-    margin-top: 6px;
+    margin-top: 8px;
+    font-weight: 500;
   }
 
   .data-count span {
     color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
   }
 
   /* Empty state */
   .empty-hint {
     text-align: center;
-    padding: 20px;
+    padding: 24px;
     color: var(--text3);
-    font-size: 13px;
+    font-size: 0.88rem;
   }
 
   /* Quick add row */
   .quick-add {
     display: flex;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 10px;
+    margin-top: 12px;
   }
 
   .quick-add .form-input {
@@ -460,13 +465,13 @@
   }
 
   .quick-add .btn-icon {
-    width: 46px;
-    height: 46px;
+    width: 52px;
+    height: 52px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #fff;
-    font-size: 22px;
+    font-size: 24px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -474,6 +479,7 @@
     flex-shrink: 0;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.15s;
+    box-shadow: 0 2px 10px rgba(0,119,182,0.2);
   }
 
   .quick-add .btn-icon:active {
@@ -488,13 +494,14 @@
     transform: translateX(-50%) translateY(-100px);
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 13px;
+    border-radius: 14px;
+    padding: 14px 24px;
+    font-size: 0.88rem;
     color: var(--warning);
+    font-weight: 600;
     z-index: 1000;
     transition: transform 0.3s ease;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
   }
 
   .toast.show {
@@ -503,28 +510,89 @@
 
   /* Info */
   .info-block {
-    background: rgba(56,189,248,0.05);
-    border: 1px solid rgba(56,189,248,0.1);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-top: 12px;
+    background: rgba(0,119,182,0.04);
+    border: 1px solid rgba(0,119,182,0.1);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 14px;
   }
 
   .info-block p {
-    font-size: 12px;
-    color: var(--text3);
-    line-height: 1.7;
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.8;
   }
 
   /* Scrollbar */
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+  /* ── 专属水印 / 作者署名 ─────────────────────────── */
+  .author-watermark {
+    position: fixed;
+    bottom: 25px;
+    right: 30px;
+    text-align: right;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+  }
+  .author-watermark:hover {
+    opacity: 1;
+  }
+  .aw-title {
+    font-family: 'STXingkai', '华文行楷', 'KaiTi', '楷体', 'Noto Serif SC', serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 4px 10px rgba(0, 119, 182, 0.15);
+    margin-bottom: 2px;
+  }
+  .aw-sub {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 0.65rem;
+    color: #8a9ba8;
+    letter-spacing: 2px;
+  }
+
+  /* ── 手机端自适应 ─────────────────────────────────── */
+  @media (max-width: 600px) {
+    html { font-size: 115%; }
+
+    .app {
+      padding: 0 16px 140px;
+    }
+
+    .tab {
+      font-size: 0.82rem;
+      padding: 11px 0;
+    }
+
+    .header h1 {
+      font-size: 1.35rem;
+    }
+
+    .result-highlight .value {
+      font-size: 1.25rem;
+    }
+
+    /* 手机端水印居中放底部 */
+    .author-watermark {
+      position: static;
+      text-align: center;
+      margin-top: 30px;
+      padding-bottom: 30px;
+    }
+  }
 </style>
 </head>
 <body>
 
-<div class="bg-pattern"></div>
 <div id="toast" class="toast"></div>
 
 <div class="app">
@@ -553,7 +621,7 @@
         <button class="btn-icon" onclick="addData()">+</button>
       </div>
 
-      <div class="form-hint" style="margin-top:8px">逐个输入测量值，或一次性粘贴多个数据（用空格/逗号分隔）</div>
+      <div class="form-hint" style="margin-top:10px">逐个输入测量值，或一次性粘贴多个数据（用空格/逗号分隔）</div>
 
       <div class="data-count">已输入 <span id="dataCount">0</span> 个数据</div>
       <div class="data-chips" id="dataChips">
@@ -663,6 +731,12 @@
 
 </div>
 
+<!-- 作者署名水印 -->
+<div class="author-watermark">
+  <div class="aw-title">湖南师范大学医工交叉实验室</div>
+  <div class="aw-sub">作者：聂厚继</div>
+</div>
+
 <script>
 // ===== 数据管理 =====
 let measurements = [];
@@ -681,7 +755,6 @@ function addData() {
   const raw = input.value.trim();
   if (!raw) return;
 
-  // 支持空格、逗号、分号分隔的批量输入
   const parts = raw.split(/[\s,;，；]+/).filter(s => s !== '');
   let added = 0;
 
@@ -711,7 +784,6 @@ function removeData(index) {
 function renderChips() {
   const container = document.getElementById('dataChips');
   const countEl = document.getElementById('dataCount');
-  const emptyEl = document.getElementById('emptyHint');
 
   countEl.textContent = measurements.length;
 
@@ -759,7 +831,6 @@ function calcTypeA() {
   const dof = n - 1;
 
   lastUA = uA;
-  // 自动填入合成页
   document.getElementById('inputUA').value = uA.toPrecision(6);
 
   const residuals = measurements.map(x => x - mean);
@@ -790,8 +861,8 @@ function calcTypeA() {
         <div class="value">${uA.toPrecision(6)}</div>
       </div>
 
-      <div class="step-list" style="margin-top:16px">
-        <div style="font-size:13px;color:var(--text3);font-weight:500;margin-bottom:8px">计算过程：</div>
+      <div class="step-list" style="margin-top:18px">
+        <div style="font-size:0.88rem;color:var(--text3);font-weight:600;margin-bottom:10px">计算过程：</div>
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-content">
@@ -896,13 +967,13 @@ function calcTypeB() {
         <span class="result-value">${k.toPrecision(4)}</span>
       </div>
 
-      <div class="result-highlight" style="background:linear-gradient(135deg, rgba(129,140,248,0.1), rgba(167,139,250,0.1))">
+      <div class="result-highlight" style="background:linear-gradient(135deg, rgba(94,96,206,0.08), rgba(123,47,247,0.08))">
         <div class="label">B类标准不确定度 u<sub>B</sub></div>
         <div class="value" style="color:var(--accent2)">${uB.toPrecision(6)}</div>
       </div>
 
-      <div class="step-list" style="margin-top:16px">
-        <div style="font-size:13px;color:var(--text3);font-weight:500;margin-bottom:8px">计算过程：</div>
+      <div class="step-list" style="margin-top:18px">
+        <div style="font-size:0.88rem;color:var(--text3);font-weight:600;margin-bottom:10px">计算过程：</div>
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-content">
@@ -963,13 +1034,13 @@ function calcCombined() {
         <span class="result-value">${k}</span>
       </div>
 
-      <div class="result-highlight" style="background:linear-gradient(135deg, rgba(52,211,153,0.1), rgba(56,189,248,0.1))">
+      <div class="result-highlight" style="background:linear-gradient(135deg, rgba(5,150,105,0.08), rgba(0,119,182,0.08))">
         <div class="label">扩展不确定度 U（${confLevel}）</div>
         <div class="value" style="color:var(--success)">${U.toPrecision(6)}</div>
       </div>
 
-      <div class="step-list" style="margin-top:16px">
-        <div style="font-size:13px;color:var(--text3);font-weight:500;margin-bottom:8px">计算过程：</div>
+      <div class="step-list" style="margin-top:18px">
+        <div style="font-size:0.88rem;color:var(--text3);font-weight:600;margin-bottom:10px">计算过程：</div>
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-content">
