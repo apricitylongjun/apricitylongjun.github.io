@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>5G IQ调制 - 手机演示版</title>
+    <style>
+        /* 基础样式：浅色护眼背景，大号无衬线字体 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f2f4f8;
+            color: #222;
+            margin: 0;
+            padding: 10px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 600px; /* 限制最大宽度，适配手机或平板 */
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        /* 标题区域 */
+        h1 { text-align: center; color: #111; font-size: 1.4rem; margin: 5px 0 10px 0; }
+        .subtitle { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 20px; font-weight: normal; }
+        
+        /* 控制按钮：手机端大按键，2x2网格布局 */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 14px 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #555;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent; /* 去除手机点击默认高亮 */
+        }
+        .btn.active {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            border-color: #1a73e8;
+        }
+
+        /* 数据展示面板 */
+        .panel {
+            border: 1px solid #eaeaea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafbfc;
+        }
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* 状态数字大字显 */
+        .status-box {
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* 画布自适应屏幕宽度 */
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+        }
+        
+        /* 图例说明 */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            color: #555;
+        }
+        .dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>从一维到复数空间的跃升</h1>
+    <div class="subtitle">统一IQ数学引擎 (手机演示版)</div>
+
+    <div class="controls">
+        <div class="btn active" onclick="setMode('ASK')">1. 一维调幅<br><span style="font-size: 0.8rem; font-weight: normal;">AM / ASK</span></div>
+        <div class="btn" onclick="setMode('BPSK')">2. 一维调相<br><span style="font-size: 0.8rem; font-weight: normal;">PM / BPSK</span></div>
+        <div class="btn" onclick="setMode('QPSK')">3. 二维初步<br><span style="font-size: 0.8rem; font-weight: normal;">QPSK</span></div>
+        <div class="btn" onclick="setMode('16QAM')">4. 二维纵深<br><span style="font-size: 0.8rem; font-weight: normal;">16-QAM</span></div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">
+            <span>I-Q 星座图</span>
+            <span class="status-box">发送: <span id="currentBits">--</span></span>
+        </div>
+        <canvas id="constellationCanvas" width="400" height="400"></canvas>
+        <div class="legend">
+            <span>I路: <b id="valI" style="color:#1a73e8">0.00</b></span>
+            <span>|</span>
+            <span>Q路: <b id="valQ" style="color:#ea4335">0.00</b></span>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">数字基带信号 (信息源)</div>
+        <canvas id="bitCanvas" width="800" height="120"></canvas>
+        
+        <div class="panel-title" style="margin-top: 15px;">IQ正交载波分离</div>
+        <canvas id="iqCanvas" width="800" height="240"></canvas>
+        <div class="legend">
+            <span><i class="dot" style="background:#1a73e8"></i> I路(蓝)</span>
+            <span><i class="dot" style="background:#ea4335"></i> Q路(红)</span>
+        </div>
+
+        <div class="panel-title" style="margin-top: 15px;">射频天线输出 (s(t))</div>
+        <canvas id="rfCanvas" width="800" height="240"></canvas>
+        <div class="legend">
+            <span><i class="dot" style="background:#34a853"></i> s(t) = I路 + Q路</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 核心状态与配置 ---
+    let currentMode = 'ASK'; 
+    let timeOffset = 0; 
+    const speed = 2.5;  // 动画速度
+    const symbolWidth = 200; // 内部画布的每符号像素宽度
+    
+    // 生成随机信息源比特流
+    const rawBits = [];
+    for(let i=0; i<100; i++) rawBits.push(Math.random() > 0.5 ? 1 : 0);
+
+    // 获取画布
+    const ctxConst = document.getElementById('constellationCanvas').getContext('2d');
+    const ctxBit = document.getElementById('bitCanvas').getContext('2d');
+    const ctxIQ = document.getElementById('iqCanvas').getContext('2d');
+    const ctxRF = document.getElementById('rfCanvas').getContext('2d');
+
+    // --- IQ 映射引擎 ---
+    function getIQMapping(symbolIndex) {
+        if(currentMode === 'ASK') {
+            let b = rawBits[symbolIndex];
+            return [b === 1 ? 1.0 : 0.2, 0, b.toString()];
+        } 
+        else if(currentMode === 'BPSK') {
+            let b = rawBits[symbolIndex];
+            return [b === 1 ? 1.0 : -1.0, 0, b.toString()];
+        } 
+        else if(currentMode === 'QPSK') {
+            let b1 = rawBits[symbolIndex * 2];
+            let b2 = rawBits[symbolIndex * 2 + 1];
+            return [b1 === 1 ? 0.707 : -0.707, b2 === 1 ? 0.707 : -0.707, `${b1}${b2}`];
+        } 
+        else if(currentMode === '16QAM') {
+            let b = rawBits.slice(symbolIndex * 4, symbolIndex * 4 + 4);
+            const map2Bit = (x, y) => {
+                if(x==0 && y==0) return -1.0; if(x==0 && y==1) return -0.33;
+                if(x==1 && y==1) return 0.33; if(x==1 && y==0) return 1.0;
+            };
+            return [map2Bit(b[0], b[1]), map2Bit(b[2], b[3]), b.join('')];
+        }
+    }
+
+    // --- UI交互 ---
+    window.setMode = function(mode) {
+        currentMode = mode;
+        const btns = document.querySelectorAll('.btn');
+        btns.forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    // --- 绘制辅助函数 ---
+    function drawGrid(ctx, h, w, lines = 3) {
+        ctx.strokeStyle = '#eeeeee'; 
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for(let i=1; i<lines; i++) {
+            ctx.moveTo(0, h * (i/lines)); ctx.lineTo(w, h * (i/lines));
+        }
+        ctx.stroke();
+    }
+
+    // --- 主动画循环 ---
+    function animate() {
+        timeOffset += speed;
+        if(timeOffset >= symbolWidth * 20) timeOffset = 0;
+
+        const w = 800; // 内部渲染宽度
+        const scanLineX = w / 3; // 扫描线位置
+        const globalTime = timeOffset + scanLineX;
+        const currentSymbolIndex = Math.floor(globalTime / symbolWidth);
+        const [currentI, currentQ, currentBitStr] = getIQMapping(currentSymbolIndex);
+
+        // 更新UI文字
+        document.getElementById('currentBits').innerText = currentBitStr;
+        document.getElementById('valI').innerText = currentI.toFixed(2);
+        document.getElementById('valQ').innerText = currentQ.toFixed(2);
+
+        // ================= 1. 星座图绘制 (白底优化) =================
+        const cw = 400, ch = 400;
+        ctxConst.clearRect(0, 0, cw, ch);
+        
+        // 坐标轴
+        ctxConst.strokeStyle = '#cccccc'; 
+        ctxConst.lineWidth = 2;
+        ctxConst.beginPath();
+        ctxConst.moveTo(0, ch/2); ctxConst.lineTo(cw, ch/2);
+        ctxConst.moveTo(cw/2, 0); ctxConst.lineTo(cw/2, ch); 
+        ctxConst.stroke();
+        
+        // 绘制理想点阵列(虚影)
+        ctxConst.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        for(let i=0; i<16; i++) {
+            let [i_ideal, q_ideal] = getIQMapping(i);
+            ctxConst.beginPath();
+            ctxConst.arc(cw/2 + i_ideal*(cw/2.5), ch/2 - q_ideal*(ch/2.5), 6, 0, 2*Math.PI);
+            ctxConst.fill();
+        }
+
+        // 当前状态点 (亮蓝色)
+        const targetX = cw/2 + currentI * (cw/2.5);
+        const targetY = ch/2 - currentQ * (ch/2.5);
+        ctxConst.beginPath();
+        ctxConst.arc(targetX, targetY, 12, 0, 2*Math.PI);
+        ctxConst.fillStyle = '#1a73e8'; 
+        ctxConst.fill();
+
+        // ================= 2. 比特流绘制 =================
+        const hBit = ctxBit.canvas.height;
+        ctxBit.clearRect(0, 0, w, hBit); 
+        drawGrid(ctxBit, hBit, w, 2);
+        
+        ctxBit.fillStyle = '#333'; 
+        ctxBit.font = 'bold 28px monospace';
+        for(let x=0; x<w; x+=2) {
+            let symIdx = Math.floor((timeOffset + x) / symbolWidth);
+            let bitStr = getIQMapping(symIdx)[2];
+            // 画文字
+            if(Math.floor(timeOffset + x) % symbolWidth === Math.floor(symbolWidth/2)) {
+                let textWidth = ctxBit.measureText(bitStr).width;
+                ctxBit.fillText(bitStr, x - textWidth/2, hBit/2 + 10);
+            }
+            // 符号边界线
+            if(Math.floor(timeOffset + x) % symbolWidth === 0) {
+                ctxBit.strokeStyle = '#ddd'; 
+                ctxBit.beginPath(); ctxBit.moveTo(x, 0); ctxBit.lineTo(x, hBit); ctxBit.stroke();
+            }
+        }
+
+        // ================= 3. 波形绘制 =================
+        const hIQ = ctxIQ.canvas.height;
+        const hRF = ctxRF.canvas.height;
+        ctxIQ.clearRect(0, 0, w, hIQ); drawGrid(ctxIQ, hIQ, w, 2);
+        ctxRF.clearRect(0, 0, w, hRF); drawGrid(ctxRF, hRF, w, 2);
+        
+        ctxIQ.lineWidth = 4; // 波形线加粗，手机上更清晰
+        ctxRF.lineWidth = 4;
+        const omega = 2 * Math.PI / (symbolWidth / 2.5); // 载波频率
+
+        ctxIQ.beginPath(); const iPoints = [];
+        ctxIQ.beginPath(); const qPoints = [];
+        ctxRF.beginPath(); const rfPoints = [];
+
+        for(let x=0; x<w; x+=2) { // 步长为2提高性能
+            let t = timeOffset + x;
+            let symIdx = Math.floor(t / symbolWidth);
+            let [I_val, Q_val] = getIQMapping(symIdx);
+            
+            let iWave = I_val * Math.cos(omega * t);
+            let qWave = -Q_val * Math.sin(omega * t);
+            let rfWave = iWave + qWave;
+
+            iPoints.push({x: x, y: hIQ/2 - iWave * (hIQ/2.5)});
+            qPoints.push({x: x, y: hIQ/2 - qWave * (hIQ/2.5)});
+            rfPoints.push({x: x, y: hRF/2 - rfWave * (hRF/2.5)});
+        }
+
+        // I 路 (蓝色)
+        ctxIQ.strokeStyle = '#1a73e8'; ctxIQ.beginPath();
+        iPoints.forEach((p, i) => i==0 ? ctxIQ.moveTo(p.x, p.y) : ctxIQ.lineTo(p.x, p.y)); ctxIQ.stroke();
+        
+        // Q 路 (红色)
+        ctxIQ.strokeStyle = '#ea4335'; ctxIQ.beginPath();
+        qPoints.forEach((p, i) => i==0 ? ctxIQ.moveTo(p.x, p.y) : ctxIQ.lineTo(p.x, p.y)); ctxIQ.stroke();
+
+        // RF 射频 (绿色)
+        ctxRF.strokeStyle = '#34a853'; ctxRF.beginPath();
+        rfPoints.forEach((p, i) => i==0 ? ctxRF.moveTo(p.x, p.y) : ctxRF.lineTo(p.x, p.y)); ctxRF.stroke();
+
+        // ================= 4. 全局扫描线 (显眼的橙色) =================
+        [ctxBit, ctxIQ, ctxRF].forEach(ctx => {
+            ctx.strokeStyle = '#ff9900'; 
+            ctx.lineWidth = 3; 
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath(); 
+            ctx.moveTo(scanLineX, 0); 
+            ctx.lineTo(scanLineX, ctx.canvas.height); 
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+</body>
+</html>
