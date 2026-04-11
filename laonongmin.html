@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业农业灌溉排期系统</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { max-width: 700px; width: 100%; }
+        h1 { font-size: 24px; color: var(--text-main); margin-bottom: 8px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block; }
+        p.subtitle { color: var(--text-muted); margin-bottom: 30px; font-size: 14px; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); margin-bottom: 24px; border: 1px solid var(--border); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        select, input[type="number"], input[type="time"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: border-color 0.2s; background-color: #fcfcfc; }
+        select:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .helper-text { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+        button { background-color: var(--primary); color: white; border: none; padding: 14px 24px; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; transition: background-color 0.2s; }
+        button:hover { background-color: var(--primary-hover); }
+        
+        /* 结果展示区样式 */
+        #resultSection { display: none; }
+        .summary-box { background: #eff6ff; border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: 4px; margin-bottom: 25px; }
+        .summary-box h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 18px; }
+        .timeline { position: relative; margin-left: 15px; padding-left: 20px; border-left: 2px solid var(--border); }
+        .timeline-item { position: relative; margin-bottom: 25px; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-item::before { content: ''; position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--primary); }
+        .timeline-item.final::before { background: var(--success); border-color: var(--success); }
+        .time-badge { font-weight: 700; color: var(--primary); font-size: 16px; margin-right: 10px; }
+        .timeline-desc { font-size: 15px; color: var(--text-main); }
+        .timeline-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        .final-text { color: var(--success); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>农业灌溉排期与催熟规划系统</h1>
+    <p class="subtitle">基于“余数前置”算法，优化水分蓄积利用率，实现精准成熟倒计时。</p>
+
+    <div class="card">
+        <div class="form-group">
+            <label>目标作物类型</label>
+            <select id="cropType" onchange="updateCropDefaults()">
+                <optgroup label="超长周期 (蓄积上限 640 分钟)">
+                    <option value="640">蓝莓 / 卷心菜 / 辣椒</option>
+                </optgroup>
+                <optgroup label="长周期 (蓄积上限 320 分钟)">
+                    <option value="320" selected>香蕉 / 柚子 / 西瓜 / 木瓜</option>
+                </optgroup>
+                <optgroup label="中周期 (蓄积上限 160 分钟)">
+                    <option value="160">南瓜 / 茄子</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>系统基准时间</label>
+                <input type="time" id="startTime" value="14:00" required>
+            </div>
+            <div class="form-group">
+                <label>排期安全缓冲值 (分钟)</label>
+                <input type="number" id="safeInterval" value="300" required>
+                <div class="helper-text" id="safeHelper">建议设定在极限上限以下，预留操作时间。</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>剩余生长周期 (小时)</label>
+                <input type="number" id="remHours" value="12" min="0" required>
+            </div>
+            <div class="form-group">
+                <label>剩余生长周期 (分钟)</label>
+                <input type="number" id="remMins" value="0" min="0" max="59" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>当前已有蓄积量 (分钟)</label>
+            <input type="number" id="currentStored" value="0" min="0" placeholder="如刚完成灌溉请填 0">
+        </div>
+
+        <button onclick="generateStrategy()">生成最优排期表</button>
+    </div>
+
+    <div class="card" id="resultSection">
+        <div class="summary-box">
+            <h3>规划结果总览</h3>
+            <div id="summaryText"></div>
+        </div>
+        
+        <h4 style="margin-bottom: 20px;">执行排期时间轴</h4>
+        <div class="timeline" id="timelineList">
+            </div>
+    </div>
+</div>
+
+<script>
+    // 切换作物时，自动调整安全缓冲值（默认预留 20 分钟容错）
+    function updateCropDefaults() {
+        const capacity = parseInt(document.getElementById('cropType').value);
+        const safeInput = document.getElementById('safeInterval');
+        const defaultSafe = Math.max(capacity - 20, Math.floor(capacity * 0.9)); // 至少预留20分钟或10%
+        safeInput.value = defaultSafe;
+        safeInput.max = capacity;
+    }
+
+    function addMinutes(timeStr, minsToAdd) {
+        let [hours, mins] = timeStr.split(':').map(Number);
+        let date = new Date();
+        date.setHours(hours, mins, 0, 0);
+        date.setMinutes(date.getMinutes() + minsToAdd);
+        
+        let padHours = String(date.getHours()).padStart(2, '0');
+        let padMins = String(date.getMinutes()).padStart(2, '0');
+        let nextDay = date.getDate() !== new Date().getDate() ? " (次日)" : "";
+        
+        return `${padHours}:${padMins}${nextDay}`;
+    }
+
+    function generateStrategy() {
+        const startTime = document.getElementById('startTime').value;
+        const targetSafe = parseInt(document.getElementById('safeInterval').value);
+        const maxCapacity = parseInt(document.getElementById('cropType').value);
+        const remHours = parseInt(document.getElementById('remHours').value) || 0;
+        const remMins = parseInt(document.getElementById('remMins').value) || 0;
+        const currentStored = parseInt(document.getElementById('currentStored').value) || 0;
+
+        if(targetSafe > maxCapacity) {
+            alert("安全缓冲值不能超过作物的最大蓄积上限！");
+            return;
+        }
+
+        const totalRemMins = remHours * 60 + remMins;
+        
+        // 核心公式：实际所需现实时间
+        let R = (totalRemMins - currentStored / 4) / 1.25;
+        
+        if (R <= 0) {
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('summaryText').innerHTML = "当前状态已满足条件，<b>立即执行灌溉即可瞬间成熟。</b>";
+            document.getElementById('timelineList').innerHTML = "";
+            return;
+        }
+
+        R = Math.ceil(R);
+        let remainingR = R;
+        let elapsed = 0;
+        let actions = [];
+
+        // 步骤 1：处理现有蓄积量（补充至安全阈值）
+        if (currentStored > 0 && remainingR > (targetSafe - currentStored)) {
+            let topOffTime = targetSafe - currentStored;
+            elapsed += topOffTime;
+            remainingR -= topOffTime;
+            actions.push({
+                time: elapsed,
+                title: "阈值补充灌溉",
+                sub: `等待 ${topOffTime} 分钟。释放当前累积量，重置蓄积周期。`
+            });
+        }
+
+        // 步骤 2：余数前置处理（处理不能被安全缓冲值整除的零头）
+        let remainder = remainingR % targetSafe;
+        if (remainder > 0 && remainingR > targetSafe) {
+            elapsed += remainder;
+            remainingR -= remainder;
+            actions.push({
+                time: elapsed,
+                title: "前置周期灌溉 (消化零头)",
+                sub: `等待 ${remainder} 分钟。提前释放部分蓄积量，对齐后续完整周期。`
+            });
+        }
+
+        // 步骤 3：完整周期循环与最终爆发
+        while (remainingR > 0) {
+            let interval = Math.min(targetSafe, remainingR);
+            elapsed += interval;
+            remainingR -= interval;
+            
+            if (remainingR === 0) {
+                // 最后一次灌溉
+                actions.push({
+                    time: elapsed,
+                    title: "终极催熟灌溉",
+                    sub: `完美触发！执行灌溉后作物瞬间成熟。`,
+                    isFinal: true
+                });
+            } else {
+                // 中间完整周期
+                actions.push({
+                    time: elapsed,
+                    title: "标准周期灌溉",
+                    sub: `等待 ${interval} 分钟。蓄积量达到设定安全线，执行常规释放。`
+                });
+            }
+        }
+
+        // 渲染结果
+        let hoursTotal = Math.floor(R / 60);
+        let minsTotal = R % 60;
+        let finalTime = addMinutes(startTime, R);
+        
+        document.getElementById('summaryText').innerHTML = 
+            `预估总耗时：<b>${hoursTotal}小时 ${minsTotal}分钟</b><br>` +
+            `绝对成熟时间：<b class="final-text" style="font-size: 1.1em;">${finalTime}</b>`;
+
+        let timelineHtml = '';
+        actions.forEach((act) => {
+            let itemClass = act.isFinal ? "timeline-item final" : "timeline-item";
+            let titleClass = act.isFinal ? "final-text" : "";
+            timelineHtml += `
+                <div class="${itemClass}">
+                    <span class="time-badge">${addMinutes(startTime, act.time)}</span>
+                    <span class="timeline-desc ${titleClass}">${act.title}</span>
+                    <div class="timeline-sub">${act.sub}</div>
+                </div>
+            `;
+        });
+
+        document.getElementById('timelineList').innerHTML = timelineHtml;
+        document.getElementById('resultSection').style.display = 'block';
+    }
+</script>
+</body>
+</html>
