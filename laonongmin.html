@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>峡谷农场 - APRICITY的浇水排期器 (秒级精准版)</title>
+    <title>峡谷农场 - 精准浇水排期器</title>
     <style>
         :root {
             --primary-color: #f39c12; 
@@ -14,7 +14,7 @@
             --text-sub: #7f8c8d;
             --border-color: #bdc3c7;
             --success-color: #27ae60; 
-            --danger-color: #e74c3c;
+            --danger-color: #e74c3c; 
             --radius-lg: 20px;
             --radius-md: 14px;
             --shadow: 0 10px 30px rgba(243, 156, 18, 0.15);
@@ -63,9 +63,18 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
             border: 2px solid #34495e;
+            position: relative;
+            overflow: hidden;
         }
+        .live-clock-box::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+            transform: skewX(-20deg); animation: shine 3s infinite;
+        }
+        @keyframes shine { 100% { left: 200%; } }
+
         .live-clock-title { font-size: 12px; color: #95a5a6; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; }
-        .live-clock-time { font-size: 32px; font-weight: 900; color: #f1c40f; font-family: monospace; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+        .live-clock-time { font-size: 32px; font-weight: 900; color: #f1c40f; font-family: monospace; text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
 
         .card { 
             background: var(--card-bg); 
@@ -73,6 +82,7 @@
             padding: 24px; 
             box-shadow: var(--shadow); 
             margin-bottom: 20px; 
+            border: 1px solid rgba(243, 156, 18, 0.2);
         }
 
         .instruction-box {
@@ -83,7 +93,8 @@
             margin-bottom: 25px;
         }
         .instruction-box h3 { margin: 0 0 10px 0; color: #d35400; font-size: 18px; display: flex; align-items: center; gap: 5px; }
-        .instruction-box p { margin: 5px 0; font-size: 14px; line-height: 1.6; color: #57606f; }
+        .instruction-box ul { margin: 0; padding-left: 20px; color: #57606f; font-size: 14px; line-height: 1.6; font-weight: bold; }
+        .instruction-box li { margin-bottom: 6px; }
         .instruction-box strong { color: #d35400; }
 
         .form-group { margin-bottom: 20px; }
@@ -146,7 +157,7 @@
             font-size: 40px; font-weight: 900; color: var(--danger-color); font-family: monospace;
             background: #fff; border-radius: 10px; padding: 10px; margin-top: 15px;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); border: 2px dashed var(--danger-color);
-            display: inline-block; min-width: 220px;
+            display: inline-block; min-width: 220px; text-shadow: 0 0 5px rgba(231, 76, 60, 0.2);
         }
 
         h3.section-title { font-size: 20px; margin: 0 0 20px 0; border-left: 5px solid var(--primary-color); padding-left: 12px; font-weight: 900;}
@@ -159,12 +170,12 @@
             border-radius: 50%; background: white; border: 4px solid var(--primary-color); 
         }
         .timeline-item.final::before { background: var(--success-color); border-color: var(--success-color); box-shadow: 0 0 0 5px rgba(39, 174, 96, 0.2); }
-        .timeline-item.danger::before { border-color: var(--danger-color); background: var(--danger-color); box-shadow: 0 0 0 5px rgba(231, 76, 60, 0.2); }
+        .timeline-item.danger::before { border-color: var(--danger-color); background: var(--danger-color); box-shadow: 0 0 0 5px rgba(231, 76, 60, 0.3); animation: pulse 1s infinite; }
         
         .time-badge { font-size: 22px; font-weight: 900; color: var(--text-main); display: block; margin-bottom: 6px; font-family: monospace; }
         .act-title { font-size: 18px; font-weight: 900; color: #d35400; margin-bottom: 6px; }
         .act-title.final { color: var(--success-color); font-size: 22px; }
-        .act-title.danger { color: var(--danger-color); font-size: 20px; animation: pulse 1s infinite; }
+        .act-title.danger { color: var(--danger-color); font-size: 20px; }
         .act-desc { font-size: 15px; color: var(--text-sub); line-height: 1.5; font-weight: bold; }
 
     </style>
@@ -173,39 +184,41 @@
 
 <div class="container">
     <div class="header">
-        <h1>🌾 峡谷农场终极排期器</h1>
-        <div class="author-tag">⚡ 算法作者：龙俊 ⚡</div>
+        <h1>🌾 峡谷农场 - 精准浇水排期器</h1>
+        <div class="author-tag">⚡ 算法提供：龙俊 ⚡</div>
     </div>
 
     <div class="live-clock-box">
-        <div class="live-clock-title">🔴 实时标准北京时间 (自动校准)</div>
+        <div class="live-clock-title">🔴 当前时间 (标准北京时间)</div>
         <div class="live-clock-time" id="liveClock">00:00:00</div>
     </div>
 
     <div class="instruction-box">
-        <h3>📢 必看！电竞农场主防呆指南！！！</h3>
-        <p>1️⃣ <strong>别让时间溢出！</strong> 蓄能槽满了不点，时间就白白流失了！容错率设个 <b>80%-90%</b>，去打把王者回来再收菜，稳如防御塔！😎</p>
-        <p>2️⃣ <strong>时间绝对精准：</strong> 算法已升级至【秒级】，完美匹配游戏倒计时！</p>
-        <p>3️⃣ <strong>怎么操作？</strong> 严格按下面闹钟的 CD 走！</p>
+        <h3>📢 操作指南</h3>
+        <ul>
+            <li><strong>设定安全线：</strong>建议将容错率设为 <b>80%-90%</b>，预留充足的上线操作时间，防止水滴溢出浪费。</li>
+            <li><strong>精准对齐：</strong>本工具已精确至秒级，请严格对照游戏内的当前倒计时填写。</li>
+            <li><strong>按时执行：</strong>生成排期后，请按下方的时间轴准时回游戏点击浇水。</li>
+        </ul>
     </div>
 
     <div class="card">
         <div class="form-group">
-            <label>🍎 种的啥高阶作物？(决定你的蓄能槽上限！)</label>
+            <label>🍎 作物类型 (决定浇水槽上限)</label>
             <select id="cropType" onchange="updateCropDefaults()">
-                <option value="640">超大蓄能槽 (640分): 蓝莓 / 卷心菜 / 辣椒</option>
-                <option value="320" selected>大型蓄能槽 (320分): 香蕉 / 柚子 / 西瓜</option>
-                <option value="160">中型蓄能槽 (160分): 南瓜 / 茄子</option>
+                <option value="640">640分大水槽: 蓝莓 / 卷心菜 / 辣椒</option>
+                <option value="320" selected>320分中水槽: 香蕉 / 柚子 / 西瓜</option>
+                <option value="160">160分小水槽: 南瓜 / 茄子</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>🛡️ 蓄能防溢出容错率</label>
+            <label>🛡️ 浇水安全线 (容错率)</label>
             <div class="input-group">
                 <input type="number" id="safePercent" value="90" min="1" max="100" required>
                 <span class="suffix">%</span>
             </div>
-            <div class="helper-text" id="safeHelper">90%最稳，预留时间打团！</div>
+            <div class="helper-text" id="safeHelper">建议 90%，既能发挥最大效率又不容易溢出。</div>
         </div>
 
         <div class="form-group">
@@ -218,29 +231,29 @@
         </div>
 
         <div class="form-group">
-            <label>⚡ 蓄能槽已攒了多久？(分 : 秒)</label>
+            <label>💧 当前已积攒水滴 (分 : 秒)</label>
             <div class="grid-2">
                 <div class="input-group"><input type="number" id="storedMins" value="0" min="0" required><span class="suffix">分</span></div>
                 <div class="input-group"><input type="number" id="storedSecs" value="0" min="0" max="59" required><span class="suffix">秒</span></div>
             </div>
-            <div class="helper-text">刚点完释放加速就填 0分 0秒！别犹豫！</div>
+            <div class="helper-text">若刚刚在游戏内点过浇水，请直接填 0分 0秒。</div>
         </div>
 
-        <button onclick="generateStrategy()">🚀 一键排期！榨干每秒加速！</button>
+        <button onclick="generateStrategy()">🚀 一键生成精准浇水排期</button>
     </div>
 
     <div class="card" id="resultSection">
         <div class="summary-box">
-            <p>🎉 终极大招·瞬间秒熟时刻 🎉</p>
+            <p>🎉 预计最终成熟时间 🎉</p>
             <span class="highlight" id="finalTimeDisplay">23:36:00</span>
             <div style="margin-top: 15px;">
-                <p style="color: var(--danger-color); font-size: 14px;">🔥 最快最快成熟还剩 🔥</p>
+                <p style="color: var(--danger-color); font-size: 15px;">🔥 距离成熟还需 🔥</p>
                 <div class="countdown-display" id="countdownDisplay">00:00:00</div>
             </div>
-            <p id="totalCostDisplay" style="font-size: 15px; margin-top: 15px; color: #27ae60;">(现实中总共需要硬核爆肝：0小时)</p>
+            <p id="totalCostDisplay" style="font-size: 15px; margin-top: 15px; color: #27ae60;">(实际等待耗时：0小时)</p>
         </div>
         
-        <h3 class="section-title">⏱️ 极限卡CD操作时间轴 (精确到秒！)</h3>
+        <h3 class="section-title">⏱️ 核心操作时间轴</h3>
         <div class="timeline" id="timelineList">
             </div>
     </div>
@@ -272,13 +285,10 @@
     setInterval(updateLiveClock, 1000);
     updateLiveClock(); // 初始调用
 
-    // 更新默认文案
     function updateCropDefaults() {
         document.getElementById('safePercent').value = 90;
-        document.getElementById('safeHelper').innerText = "90%最稳，预留时间打团！";
     }
 
-    // 给定时间增加秒数，并返回格式化字符串
     function addSecondsToDate(startDate, secsToAdd) {
         let newDate = new Date(startDate.getTime() + secsToAdd * 1000);
         let timeStr = formatTime(newDate);
@@ -286,7 +296,6 @@
         return `${timeStr}${nextDay}`;
     }
 
-    // 格式化秒数为 中文时长 (用于文案)
     function formatDuration(totalSecs) {
         let m = Math.floor(totalSecs / 60);
         let s = Math.floor(totalSecs % 60);
@@ -297,10 +306,8 @@
 
     // 核心排期生成
     function generateStrategy() {
-        // 清除旧的倒计时
         if (countdownTimer) clearInterval(countdownTimer);
 
-        // 获取精确的排期基准时间 (北京时间)
         const startTime = getBeijingTime();
         
         const safePercent = parseInt(document.getElementById('safePercent').value);
@@ -314,7 +321,7 @@
         const storedS = parseInt(document.getElementById('storedSecs').value) || 0;
 
         if(safePercent <= 0 || safePercent > 100) {
-            alert("大兄弟！容错率只能填 1 到 100 之间啊！！");
+            alert("容错率只能填 1 到 100 之间哦！");
             return;
         }
         
@@ -322,40 +329,38 @@
         const maxCapacitySecs = maxCapacityMins * 60;
 
         if(currentStoredSecs > maxCapacitySecs) {
-            alert("兄弟醒醒！你填的已攒时间都超过蓄能槽上限了！");
+            alert("已攒水滴不能超过浇水槽的上限设定！");
             return;
         }
 
-        // 核心参数全部转为“秒”
         const targetSafeSecs = Math.floor(maxCapacitySecs * (safePercent / 100));
         const totalRemSecs = remH * 3600 + remM * 60 + remS;
         
-        // 核心公式计算：剩余真实耗时 (秒) = (游戏剩余总秒数 - 蓄力可抵扣秒数) / 1.25倍速
+        // 核心公式计算：剩余真实耗时 (秒) = (游戏剩余总秒数 - 水滴可抵扣秒数) / 1.25倍速
         let R_secs = (totalRemSecs - currentStoredSecs / 4) / 1.25;
         
         if (R_secs <= 0) {
             document.getElementById('resultSection').style.display = 'block';
-            document.getElementById('finalTimeDisplay').innerHTML = "就是现在！！";
+            document.getElementById('finalTimeDisplay').innerHTML = "成熟条件已满足！";
             document.getElementById('countdownDisplay').innerHTML = "00:00:00";
-            document.getElementById('totalCostDisplay').innerHTML = "别看表了！赶紧切回游戏疯狂点击释放！直接熟了！";
+            document.getElementById('totalCostDisplay').innerHTML = "现在立刻前往游戏点击浇水，作物将直接成熟！";
             document.getElementById('timelineList').innerHTML = "";
             return;
         }
 
         R_secs = Math.ceil(R_secs);
-        targetMaturityDate = new Date(startTime.getTime() + R_secs * 1000); // 设定最终成熟时间
+        targetMaturityDate = new Date(startTime.getTime() + R_secs * 1000); 
 
         let remainingR = R_secs;
         let elapsed = 0;
         let actions = [];
 
-        // 判定逻辑
         if (currentStoredSecs > 0) {
             if (currentStoredSecs >= targetSafeSecs) {
                 actions.push({
                     time: elapsed, 
-                    title: "🚨 紧急释放！蓄能已达标",
-                    sub: `你目前的蓄力（${formatDuration(currentStoredSecs)}）已经超过了 ${safePercent}% 安全线！别等了，【现在立刻马上】切回去点加速！`,
+                    title: "🚨 紧急浇水！避免溢出",
+                    sub: `当前积攒的水滴（${formatDuration(currentStoredSecs)}）已超过 ${safePercent}% 安全线，请立即回游戏点击浇水！`,
                     isDanger: true
                 });
             } else {
@@ -365,8 +370,8 @@
                     remainingR -= topOffTimeSecs;
                     actions.push({
                         time: elapsed,
-                        title: "🛡️ 补齐容错线",
-                        sub: `耐心等个 ${formatDuration(topOffTimeSecs)}！蓄能达到你设定的 ${safePercent}% 阈值了，赶紧点加速！清空蓄力！`
+                        title: "🛡️ 首次浇水 (达安全线)",
+                        sub: `等待 ${formatDuration(topOffTimeSecs)} 后，水滴将达到设定的 ${safePercent}%，此时请点击浇水。`
                     });
                 }
             }
@@ -378,8 +383,8 @@
             remainingR -= remainder;
             actions.push({
                 time: elapsed,
-                title: "🧹 清理烦人的零头时间",
-                sub: `挂机 ${formatDuration(remainder)} 后点击释放！把不规则的余数消化掉，后面全是对齐的大招周期！`
+                title: "🧹 清理零头时间",
+                sub: `等待 ${formatDuration(remainder)} 后点击浇水，使后续浇水周期完美对齐。`
             });
         }
 
@@ -391,26 +396,25 @@
             if (remainingR === 0) {
                 actions.push({
                     time: elapsed,
-                    title: "🔥🔥 终极斩杀！瞬间秒熟！",
-                    sub: `最后一次点击！释放海量加速能量，作物进度条瞬间清零，原地爆熟！！！`,
+                    title: "🔥🔥 最终浇水！瞬间成熟",
+                    sub: `最后一次点击浇水，清空剩余进度条，作物原地成熟！`,
                     isFinal: true
                 });
             } else {
                 actions.push({
                     time: elapsed,
-                    title: "⚡ 稳如老狗的满血循环",
-                    sub: `等 ${formatDuration(interval)}（蓄能到了 ${safePercent}% ），准时按一下加速！完美卡CD，美滋滋！`
+                    title: "⚡ 满效浇水循环",
+                    sub: `等待 ${formatDuration(interval)} (水滴到达 ${safePercent}%) 时，准时点击浇水。`
                 });
             }
         }
 
-        // 显示结果
         let hoursTotal = Math.floor(R_secs / 3600);
         let minsTotal = Math.floor((R_secs % 3600) / 60);
         let secsTotal = R_secs % 60;
         
         document.getElementById('finalTimeDisplay').innerHTML = addSecondsToDate(startTime, R_secs);
-        document.getElementById('totalCostDisplay').innerHTML = `(现实中总共需要硬核爆肝：${hoursTotal}小时 ${minsTotal}分 ${secsTotal}秒)`;
+        document.getElementById('totalCostDisplay').innerHTML = `(实际等待耗时：${hoursTotal}小时 ${minsTotal}分 ${secsTotal}秒)`;
 
         let timelineHtml = '';
         actions.forEach((act) => {
@@ -428,12 +432,10 @@
         document.getElementById('timelineList').innerHTML = timelineHtml;
         document.getElementById('resultSection').style.display = 'block';
 
-        // 启动动态倒计时
         updateCountdown();
         countdownTimer = setInterval(updateCountdown, 1000);
     }
 
-    // 倒计时核心计算逻辑
     function updateCountdown() {
         if (!targetMaturityDate) return;
         
