@@ -3,240 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>长沙 ⇌ 西安：特种兵4日游企划案</title>
+    <title>长沙 ⇌ 西安：全景精算与烟火食路企划案 (定稿版)</title>
     <style>
         :root {
-            --primary-color: #d35400;
-            --secondary-color: #e67e22;
-            --bg-color: #f8f9fa;
-            --text-color: #333;
+            --primary: #d35400;
+            --secondary: #e67e22;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #888888;
+            --danger: #c0392b;
+            --success: #27ae60;
         }
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
+            background-color: var(--bg); color: var(--text-main);
+            max-width: 950px; margin: 0 auto; padding: 20px; line-height: 1.6;
         }
         header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 2px solid var(--primary-color);
-            margin-bottom: 20px;
+            text-align: center; padding: 20px 0; border-bottom: 3px solid var(--primary); margin-bottom: 25px;
         }
-        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        h1 { color: var(--primary); margin-bottom: 10px; font-size: 26px; }
         .time-badge {
-            background: #2c3e50; color: white; padding: 5px 15px;
-            border-radius: 15px; font-size: 14px; display: inline-block;
+            background: #2c3e50; color: white; padding: 6px 15px;
+            border-radius: 20px; font-size: 14px; display: inline-block; margin-bottom: 10px;
         }
         .card {
-            background: #fff; padding: 25px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px;
+            background: var(--card-bg); padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 25px; overflow-x: auto;
         }
-        h2 { border-left: 5px solid var(--primary-color); padding-left: 10px; color: #2c3e50; }
-        
-        /* 时序图样式 */
-        .timeline-simple {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #fdf2e9; padding: 20px; border-radius: 8px; overflow-x: auto;
-        }
-        .time-node { text-align: center; min-width: 100px; position: relative; }
-        .time-node strong { display: block; color: var(--primary-color); font-size: 18px; }
-        .time-node span { font-size: 13px; color: #666; }
-        .time-arrow { color: #ccc; font-size: 24px; font-weight: bold; }
+        h2 { border-left: 5px solid var(--primary); padding-left: 12px; color: #2c3e50; margin-top: 0; }
+        .highlight { color: var(--danger); font-weight: bold; }
 
-        /* 表格样式 */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
-        th { background-color: #fdf2e9; color: #2c3e50; }
-        
-        /* 图文排版 */
-        .img-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px; margin-top: 15px;
+        /* ================= 1. 精算账单表格 ================= */
+        .budget-table {
+            width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;
         }
-        .img-box {
-            background: #f1f1f1; border-radius: 8px; overflow: hidden;
-            text-align: center; border: 1px dashed #ccc;
+        .budget-table th, .budget-table td {
+            border: 1px solid #e0e0e0; padding: 12px; text-align: left;
         }
-        .img-box img { width: 100%; height: 150px; object-fit: cover; display: block; }
-        .img-box p { margin: 5px 0; font-size: 14px; font-weight: bold; color: #555; }
-        
-        /* 表单与交互 */
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input[type="text"], textarea {
-            width: 100%; padding: 10px; border: 1px solid #ddd;
-            border-radius: 5px; box-sizing: border-box;
+        .budget-table th { background-color: #2c3e50; color: white; white-space: nowrap;}
+        .budget-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .cost-cell { font-weight: bold; color: var(--danger); font-size: 15px; }
+        .discount-cell { color: var(--success); font-weight: bold; }
+        .discount-badge {
+            background: #e8f5e9; color: var(--success); border: 1px solid var(--success);
+            padding: 2px 6px; border-radius: 4px; font-size: 12px;
         }
-        button {
-            background: var(--primary-color); color: white; border: none;
-            padding: 12px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 100%;
+
+        /* ================= 2. 烟火食路 (新增栏目) ================= */
+        .food-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;
         }
-        button:hover { background: var(--secondary-color); }
-        .total-price { font-size: 24px; color: #e74c3c; font-weight: bold; }
+        .food-item {
+            background: #fff8f2; border: 1px solid #ffcc80; padding: 15px; border-radius: 8px;
+        }
+        .food-item h4 { margin: 0 0 8px 0; color: #d35400; display: flex; align-items: center; }
+        .food-item h4::before { content: '🥢'; margin-right: 8px; }
+
+        /* ================= 3. 时间轴与打卡区 ================= */
+        .day-box { border: 2px solid #eee; border-radius: 10px; margin-bottom: 30px; overflow: hidden; background: #fff; }
+        .day-header { background: #2c3e50; color: white; padding: 12px 20px; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between; }
+        .timeline-node { padding: 15px 20px; border-bottom: 1px dashed #eee; position: relative; }
+        .timeline-node:last-child { border-bottom: none; }
+        .node-info { display: flex; align-items: flex-start; }
+        .node-time { background: var(--primary); color: white; padding: 4px 10px; border-radius: 4px; font-weight: bold; margin-right: 15px; font-size: 14px; min-width: 55px; text-align: center; }
+        .node-text { font-size: 14px; flex: 1; }
+        .node-text strong { color: var(--primary); }
+        .node-food-tip { background: #fff3cd; color: #856404; font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+
+        .photo-placeholder {
+            margin-left: 70px; margin-top: 10px; background: #f9f9f9; border: 1px dashed #ccc; border-radius: 6px;
+            text-align: center; height: 100px; display: flex; align-items: center; justify-content: center; color: #aaa;
+        }
+
+        .total-box {
+            background: #2c3e50; color: white; padding: 20px; text-align: center; border-radius: 8px; margin-top: 10px;
+        }
+        .total-box span { color: #f1c40f; font-size: 28px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎒 长沙 ⇌ 西安：高性价比特种兵之旅</h1>
-        <div class="time-badge" id="beijingTime">加载北京时间中...</div>
-        <p>行程日期：4月21日 - 4月26日 | 核心主打：极致性价比与劳逸结合</p>
+        <h1>🎒 长沙 ⇌ 西安：全景精算与烟火食路企划案</h1>
+        <div class="time-badge" id="beijingTime">加载时间中...</div>
+        <p><strong>酒店地标：</strong> 滨江之星连锁酒店 (西安钟楼回民街店)</p>
     </header>
 
     <div class="card">
-        <h2>⏱️ 行程时序图 (Timeline)</h2>
-        <div class="timeline-simple">
-            <div class="time-node"><strong>周二 (21日)</strong><span>13:15 长沙乘车<br>火车过夜</span></div>
-            <div class="time-arrow">➔</div>
-            <div class="time-node"><strong>周三 (22日)</strong><span>05:05 抵西安<br>市区/城墙/夜景</span></div>
-            <div class="time-arrow">➔</div>
-            <div class="time-node"><strong>周四 (23日)</strong><span>全天兵马俑<br>大唐不夜城</span></div>
-            <div class="time-arrow">➔</div>
-            <div class="time-node"><strong>周五 (24日)</strong><span>博物馆/校园<br>选看演出</span></div>
-            <div class="time-arrow">➔</div>
-            <div class="time-node"><strong>周六 (25日)</strong><span>退房闲逛<br>晚间乘车返程</span></div>
-            <div class="time-arrow">➔</div>
-            <div class="time-node"><strong>周日 (26日)</strong><span>上午抵长沙<br>实验室备战组会</span></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>💰 核心开销与交通明细 (单人预估)</h2>
-        <table>
-            <tr>
-                <th>类别</th>
-                <th>详细信息</th>
-                <th>金额 (学生价)</th>
-            </tr>
-            <tr>
-                <td><strong>去程火车</strong></td>
-                <td>4月21日 K1088 (13:15 长沙出发 ➔ 次日 05:05 抵西安) <br>硬卧原价约261.5元，打7折</td>
-                <td><strong>约 185.5 元</strong></td>
-            </tr>
-            <tr>
-                <td><strong>返程火车</strong><br>(2选1)</td>
-                <td>
-                    <label><input type="radio" name="train" value="183.05" onchange="calc()" checked> <strong>首选：K1086</strong> (25日 19:38 西安发 ➔ 26日 12:04 到) 原价261.5打7折</label><br>
-                    <label><input type="radio" name="train" value="187.95" onchange="calc()"> <strong>候补：G232/同级</strong> (25日 20:01 西安发 ➔ 26日 09:45 到) 原价268.5打7折</label>
-                </td>
-                <td><strong id="trainReturnPrice">约 183.1 元</strong></td>
-            </tr>
-            <tr>
-                <td><strong>酒店住宿</strong></td>
-                <td>钟楼回民街附近双人床房。3晚总价263元。<br>平摊每人3晚仅需约131.5元 (<strong>合一晚仅约 43 元！极致便宜！</strong>)</td>
-                <td><strong>131.5 元</strong></td>
-            </tr>
-            <tr>
-                <td><strong>门票与演出</strong></td>
-                <td>
-                    兵马俑门票 (学生价: <input type="radio" name="ticket" value="60" onchange="calc()" checked>60元 | 全价: <input type="radio" name="ticket" value="120" onchange="calc()">120元)<br>
-                    是否看演出：
-                    <select id="showSelect" onchange="calc()" style="padding:5px;">
-                        <option value="0">暂不看演出 (0元)</option>
-                        <option value="238">长恨歌 (约238元)</option>
-                        <option value="218">千古情 (约218元)</option>
-                    </select>
-                </td>
-                <td><strong id="ticketTotal">60 元</strong></td>
-            </tr>
-            <tr>
-                <td><strong>日常餐饮交通</strong></td>
-                <td>4天半吃喝打车，日均70元。丰俭由人。</td>
-                <td><strong>约 300 元</strong></td>
-            </tr>
+        <h2>💰 极致精算开销表 (单人)</h2>
+        <table class="budget-table">
+            <thead>
+                <tr>
+                    <th>项目</th>
+                    <th>花费</th>
+                    <th>🎟️ 优惠折扣</th>
+                    <th>📝 备注说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>往返火车</strong></td>
+                    <td class="cost-cell">¥360</td>
+                    <td class="discount-cell">学生 7 折</td>
+                    <td>去程180+，回程180。硬卧。</td>
+                </tr>
+                <tr>
+                    <td><strong>酒店 (3晚)</strong></td>
+                    <td class="cost-cell">¥130</td>
+                    <td class="discount-cell">淡季特价 4 折</td>
+                    <td>滨江之星钟楼店，人均130多。</td>
+                </tr>
+                <tr>
+                    <td><strong>4.22 景点</strong></td>
+                    <td class="cost-cell">¥168</td>
+                    <td class="discount-cell">闲鱼特价/折扣</td>
+                    <td>博物院讲解19 + 碑林110(9折) + 城墙39(闲鱼)</td>
+                </tr>
+                <tr>
+                    <td><strong>4.23 跟团</strong></td>
+                    <td class="cost-cell">¥450</td>
+                    <td class="discount-cell">拼团血赚价</td>
+                    <td>含兵马俑+华清宫+长恨歌+车+导+早中餐(原价680+)</td>
+                </tr>
+                <tr>
+                    <td><strong>4.24 景点</strong></td>
+                    <td class="cost-cell">¥250</td>
+                    <td class="discount-cell">拼团/学生票</td>
+                    <td>陕历博讲解20 + 大雁塔30(学生) + 宫宴预估200</td>
+                </tr>
+                <tr>
+                    <td><strong>市内/特产</strong></td>
+                    <td class="cost-cell">¥150+</td>
+                    <td class="discount-cell">灵活控制</td>
+                    <td>地铁、特产、宫宴潜在优惠。</td>
+                </tr>
+            </tbody>
         </table>
-        <div style="text-align: right; margin-top: 15px;">
-            当前勾选配置总计：<span class="total-price" id="finalPrice">860.1</span> 元/人
+        <div class="total-box">
+            硬性预算合计：<span>约 ¥1508.0</span><br>
+            <small>已靠特价及学生优惠累计节省 <strong>¥600+</strong></small>
         </div>
     </div>
 
     <div class="card">
-        <h2>🗺️ 详细行程与景点参考</h2>
-        <p>这里是我们即将打卡的景点预览（请在 GitHub 上传对应照片替换本地文件）：</p>
-        <ul>
-            <li><strong>Day 1 (周三)：</strong> 凌晨抵达 ➔ 酒店放行李 ➔ 碑林博物馆 / 西安博物院 ➔ 傍晚西安城墙骑单车 ➔ 钟鼓楼夜景。</li>
-            <li><strong>Day 2 (周四)：</strong> 兵马俑全天特种兵（带便当和水中午吃，打车/公交前往）➔ 晚上逛大唐不夜城。</li>
-            <li><strong>Day 3 (周五)：</strong> 陕西历史博物馆（需抢票）或 去西安交大（兴庆校区）逛校园 ➔ 大雁塔广场。</li>
-            <li><strong>Day 4 (周六)：</strong> 退房寄行李 ➔ 去寺庙或顺城巷逛逛 ➔ 下午买特产 ➔ 晚上火车站候车。</li>
-        </ul>
-        
-        <div class="img-grid">
-            <div class="img-box"><img src="images/1.png" alt="暂无图片"><p>兵马俑</p></div>
-            <div class="img-box"><img src="images/2.png" alt="暂无图片"><p>大唐不夜城</p></div>
-            <div class="img-box"><img src="images/3.png" alt="暂无图片"><p>西安城墙</p></div>
-            <div class="img-box"><img src="images/4.png" alt="暂无图片"><p>西安交大</p></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>🍜 西安必吃美食地图</h2>
-        <p>预算已经留好了，这些碳水炸弹不可错过：</p>
-        <ul>
-            <li><strong>肉丸胡辣汤：</strong> 西安人的清晨唤醒神器，配上一个饦饦馍，碳水加倍。</li>
-            <li><strong>羊肉泡馍 / 葫芦头：</strong> 晚上的硬菜，自己掰馍体验当地灵魂。</li>
-            <li><strong>肉夹馍 & 凉皮：</strong> 经典三秦套餐，中午随便找家小店对付一口的绝佳选择。</li>
-        </ul>
-        <div class="img-grid">
-            <div class="img-box"><img src="images/food1.png" alt="暂无图片"><p>胡辣汤</p></div>
-            <div class="img-box"><img src="images/food2.png" alt="暂无图片"><p>羊肉泡馍</p></div>
-            <div class="img-box"><img src="images/food3.png" alt="暂无图片"><p>肉夹馍</p></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>📝 旅游人员登记与意见收集</h2>
-        <form action="https://formspree.io/f/your_formspree_id_here" method="POST" target="_blank">
-            <div class="input-group">
-                <label>你的名字 (旅游人员)：</label>
-                <input type="text" name="name" placeholder="请输入你的大名" required>
+        <h2>早市与小吃街打卡指南</h2>
+        <div class="food-grid">
+            <div class="food-item">
+                <h4>洒金桥 (酒店步行即到)</h4>
+                <p><strong>推荐：</strong> 老李家胡辣汤、志亮灌汤蒸饺、杨天玉腊牛肉夹馍。适合4.22凌晨抵达后的首餐。</p>
             </div>
-            <div class="input-group">
-                <label>对车次、景点的调整建议：</label>
-                <textarea name="feedback" rows="4" placeholder="比如：周五想去吃某家特定的烤肉..."></textarea>
+            <div class="food-item">
+                <h4>小南门早市 (烟火气巅峰)</h4>
+                <p><strong>推荐：</strong> 肘子夹馍、油茶麻花、甄糕。4.24去陕历博前必冲。</p>
             </div>
-            <button type="submit">提交意见 (需配置后端接口)</button>
+            <div class="food-item">
+                <h4>钟楼小区 (网红挖掘地)</h4>
+                <p><strong>推荐：</strong> 胖子甄糕、绿豆馅饼。离酒店近，4.23跟团出发前可打包。</p>
+            </div>
+            <div class="food-item">
+                <h4>永兴坊 & 回民街</h4>
+                <p><strong>建议：</strong> 回民街逛氛围（酒店下楼就是），永兴坊（4.25买特产）摔碗酒体验。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="background:transparent; padding:0; box-shadow:none;">
+        <h2>📸 详细打卡时间轴</h2>
+
+        <div class="day-box">
+            <div class="day-header"><span>4月21-22日 (周二/三)</span><span>抵达与古迹</span></div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">21日 13:00</div><div class="node-text">长沙地铁出发，火车站乘卧铺前往西安。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">22日 清晨</div><div class="node-text">抵达西安站 ➔ 步行至酒店放行李 ➔ <strong>直奔洒金桥早市</strong>。</div></div>
+                <div class="node-food-tip">必吃：胡辣汤。</div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">10:00</div><div class="node-text"><strong>西安博物院</strong>：听19元专人讲解，看小雁塔。</div></div>
+                <div class="photo-placeholder">📸 此处上传小雁塔打卡照</div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">14:00</div><div class="node-text"><strong>碑林博物馆</strong>：看名碑。9折票含讲解。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">19:00</div><div class="node-text"><strong>西安城墙</strong>：咸鱼39元特价入。夜骑单车，看古城夜色。</div></div>
+            </div>
+        </div>
+
+        <div class="day-box">
+            <div class="day-header"><span>4月23日 (周四)</span><span>大秦全景跟团</span></div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">07:00</div><div class="node-text"><strong>钟楼小区</strong>快速解决早餐，集合参加450元全包团。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">全天</div><div class="node-text"><strong>兵马俑 + 华清宫</strong>：听专业导游讲解（含两餐）。</div></div>
+                <div class="photo-placeholder">📸 此处上传俑坑壮观照</div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">晚上</div><div class="node-text">观看 <strong>《长恨歌》</strong> 演出。结束后乘大巴回市区。</div></div>
+            </div>
+        </div>
+
+        <div class="day-box">
+            <div class="day-header"><span>4月24日 (周五)</span><span>盛唐风华</span></div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">07:00</div><div class="node-text">赶赴 <strong>小南门早市</strong>：体验最真实的西安早餐。</div></div>
+                <div class="node-food-tip">推荐：油茶麻花、肘子夹馍。</div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">09:30</div><div class="node-text"><strong>陕西历史博物馆</strong>：20元拼团讲解，定点抢票。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">15:00</div><div class="node-text"><strong>大雁塔</strong>：登塔(30元)。看北广场音乐喷泉。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">19:00</div><div class="node-text"><strong>大唐宫宴</strong>：沉浸式晚宴。@Zora赵选 负责优惠情报。</div></div>
+                <div class="photo-placeholder">📸 此处上传汉服/晚宴照</div>
+            </div>
+        </div>
+
+        <div class="day-box">
+            <div class="day-header"><span>4月25-26日 (周六/日)</span><span>寺庙与归途</span></div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">上午</div><div class="node-text">寺庙祈福（大兴善寺或广仁寺）。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">下午</div><div class="node-text"><strong>永兴坊</strong>：扫荡特产。下午6点西安站/北站候车。</div></div>
+            </div>
+            <div class="timeline-node">
+                <div class="node-info"><div class="node-time">26日 中午</div><div class="node-text">抵达长沙站 ➔ 地铁回学院 ➔ 准备周一开会。</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="border: 2px solid var(--secondary);">
+        <h2 style="color: var(--secondary);">📢 团队意见与任务认领</h2>
+        <form action="https://formspree.io/f/你的接口ID" method="POST" target="_blank">
+            <p style="font-weight:bold; color:var(--danger);">@Zora赵选：宫宴的内部折扣或团购券搞定了吗？请留言！</p>
+            <input type="text" name="member_name" placeholder="填写姓名 (如 Zora)" required>
+            <textarea name="feedback" rows="3" placeholder="补充你的小吃心愿或对行程的微调建议..." required></textarea>
+            <button type="submit">提交信息给队长</button>
         </form>
     </div>
 
     <script>
-        // 实时获取北京时间
         function updateTime() {
-            const options = { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const timeString = new Date().toLocaleString('zh-CN', options);
-            document.getElementById('beijingTime').innerText = '当前北京时间：' + timeString;
+            const timeStr = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
+            document.getElementById('beijingTime').innerText = '当前北京时间：' + timeStr;
         }
-        setInterval(updateTime, 1000);
-        updateTime();
-
-        // 动态计算费用
-        function calc() {
-            const goTrain = 185.5; // 固定去程
-            const hotel = 131.5;   // 固定住宿
-            const food = 300;      // 固定吃喝
-            
-            // 获取返程火车
-            let returnTrain = 0;
-            const trains = document.getElementsByName('train');
-            for(let t of trains) if(t.checked) returnTrain = parseFloat(t.value);
-            document.getElementById('trainReturnPrice').innerText = '约 ' + returnTrain.toFixed(1) + ' 元';
-
-            // 获取门票
-            let ticket = 0;
-            const tickets = document.getElementsByName('ticket');
-            for(let tk of tickets) if(tk.checked) ticket = parseFloat(tk.value);
-
-            // 获取演出
-            const show = parseFloat(document.getElementById('showSelect').value);
-            document.getElementById('ticketTotal').innerText = (ticket + show) + ' 元';
-
-            // 总计
-            const total = goTrain + returnTrain + hotel + food + ticket + show;
-            document.getElementById('finalPrice').innerText = total.toFixed(1);
-        }
+        setInterval(updateTime, 1000); updateTime();
     </script>
 </body>
 </html>
