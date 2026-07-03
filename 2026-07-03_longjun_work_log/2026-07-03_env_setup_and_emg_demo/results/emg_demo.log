@@ -1,0 +1,216 @@
+[2026-07-03 21:55:09] ============================================================
+[2026-07-03 21:55:09] HD-EMG 分类 demo 开始（在 tmux 后台运行，关掉 SSH 也会继续）
+[2026-07-03 21:55:09] ============================================================
+[2026-07-03 21:55:09] PyTorch 2.12.1+cu130 | CUDA available=True
+[2026-07-03 21:55:09] GPU: NVIDIA GeForce RTX 5080 | 含sm_120=True
+[2026-07-03 21:55:09] 加载数据: /data/data/EMG/PR_raw/preprocess_npy/features_all.npz
+[2026-07-03 21:55:09] X shape=(4030, 4, 256) dtype=float32 | Y shape=(4030,) | 类别数=34（原标签 [np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9), np.int64(10), np.int64(11), np.int64(12), np.int64(13), np.int64(14), np.int64(15), np.int64(16), np.int64(17), np.int64(18), np.int64(19), np.int64(20), np.int64(21), np.int64(22), np.int64(23), np.int64(24), np.int64(25), np.int64(26), np.int64(27), np.int64(28), np.int64(29), np.int64(30), np.int64(31), np.int64(32), np.int64(33), np.int64(34)]）
+[2026-07-03 21:55:09] train=3224  val=806
+[2026-07-03 21:55:09] 模型 EMGNet：输入通道=4 类别=34 参数量=0.04M
+[2026-07-03 21:55:10] 开始训练 200 epoch ...
+[2026-07-03 21:55:11] ★ epoch 00/200 | loss 3.4215 | train_acc 0.061 | val_acc 0.079 | best 0.079
+[2026-07-03 21:55:11] ★ epoch 01/200 | loss 3.2857 | train_acc 0.085 | val_acc 0.107 | best 0.107
+[2026-07-03 21:55:12] ★ epoch 02/200 | loss 3.1651 | train_acc 0.112 | val_acc 0.127 | best 0.127
+[2026-07-03 21:55:12] ★ epoch 03/200 | loss 3.0257 | train_acc 0.141 | val_acc 0.166 | best 0.166
+[2026-07-03 21:55:12] ★ epoch 04/200 | loss 2.9273 | train_acc 0.164 | val_acc 0.177 | best 0.177
+[2026-07-03 21:55:13]   epoch 05/200 | loss 2.7934 | train_acc 0.181 | val_acc 0.167 | best 0.177
+[2026-07-03 21:55:13] ★ epoch 06/200 | loss 2.7366 | train_acc 0.188 | val_acc 0.217 | best 0.217
+[2026-07-03 21:55:14] ★ epoch 07/200 | loss 2.6506 | train_acc 0.212 | val_acc 0.254 | best 0.254
+[2026-07-03 21:55:14]   epoch 08/200 | loss 2.5758 | train_acc 0.233 | val_acc 0.206 | best 0.254
+[2026-07-03 21:55:14]   epoch 09/200 | loss 2.5267 | train_acc 0.243 | val_acc 0.215 | best 0.254
+[2026-07-03 21:55:15]   epoch 10/200 | loss 2.4675 | train_acc 0.264 | val_acc 0.237 | best 0.254
+[2026-07-03 21:55:15] ★ epoch 11/200 | loss 2.3858 | train_acc 0.282 | val_acc 0.298 | best 0.298
+[2026-07-03 21:55:16]   epoch 12/200 | loss 2.3121 | train_acc 0.300 | val_acc 0.232 | best 0.298
+[2026-07-03 21:55:16] ★ epoch 13/200 | loss 2.2689 | train_acc 0.310 | val_acc 0.311 | best 0.311
+[2026-07-03 21:55:17]   epoch 14/200 | loss 2.2191 | train_acc 0.315 | val_acc 0.305 | best 0.311
+[2026-07-03 21:55:17] ★ epoch 15/200 | loss 2.1718 | train_acc 0.336 | val_acc 0.325 | best 0.325
+[2026-07-03 21:55:17] ★ epoch 16/200 | loss 2.1170 | train_acc 0.347 | val_acc 0.341 | best 0.341
+[2026-07-03 21:55:18] ★ epoch 17/200 | loss 2.0717 | train_acc 0.378 | val_acc 0.351 | best 0.351
+[2026-07-03 21:55:18] ★ epoch 18/200 | loss 2.0298 | train_acc 0.376 | val_acc 0.418 | best 0.418
+[2026-07-03 21:55:19]   epoch 19/200 | loss 1.9583 | train_acc 0.400 | val_acc 0.351 | best 0.418
+[2026-07-03 21:55:19]   epoch 20/200 | loss 1.9321 | train_acc 0.405 | val_acc 0.306 | best 0.418
+[2026-07-03 21:55:19]   epoch 21/200 | loss 1.8703 | train_acc 0.423 | val_acc 0.401 | best 0.418
+[2026-07-03 21:55:20]   epoch 22/200 | loss 1.8517 | train_acc 0.422 | val_acc 0.378 | best 0.418
+[2026-07-03 21:55:20] ★ epoch 23/200 | loss 1.7989 | train_acc 0.448 | val_acc 0.448 | best 0.448
+[2026-07-03 21:55:21]   epoch 24/200 | loss 1.7915 | train_acc 0.450 | val_acc 0.440 | best 0.448
+[2026-07-03 21:55:21]   epoch 25/200 | loss 1.7651 | train_acc 0.463 | val_acc 0.368 | best 0.448
+[2026-07-03 21:55:21]   epoch 26/200 | loss 1.6950 | train_acc 0.474 | val_acc 0.429 | best 0.448
+[2026-07-03 21:55:22]   epoch 27/200 | loss 1.6885 | train_acc 0.476 | val_acc 0.428 | best 0.448
+[2026-07-03 21:55:22]   epoch 28/200 | loss 1.6480 | train_acc 0.499 | val_acc 0.418 | best 0.448
+[2026-07-03 21:55:23] ★ epoch 29/200 | loss 1.6557 | train_acc 0.489 | val_acc 0.465 | best 0.465
+[2026-07-03 21:55:23]   epoch 30/200 | loss 1.5808 | train_acc 0.492 | val_acc 0.450 | best 0.465
+[2026-07-03 21:55:23]   epoch 31/200 | loss 1.5894 | train_acc 0.495 | val_acc 0.459 | best 0.465
+[2026-07-03 21:55:24] ★ epoch 32/200 | loss 1.5442 | train_acc 0.508 | val_acc 0.522 | best 0.522
+[2026-07-03 21:55:24]   epoch 33/200 | loss 1.5070 | train_acc 0.524 | val_acc 0.478 | best 0.522
+[2026-07-03 21:55:25]   epoch 34/200 | loss 1.5068 | train_acc 0.518 | val_acc 0.403 | best 0.522
+[2026-07-03 21:55:25]   epoch 35/200 | loss 1.4941 | train_acc 0.517 | val_acc 0.393 | best 0.522
+[2026-07-03 21:55:25]   epoch 36/200 | loss 1.4945 | train_acc 0.525 | val_acc 0.418 | best 0.522
+[2026-07-03 21:55:26] ★ epoch 37/200 | loss 1.4553 | train_acc 0.539 | val_acc 0.533 | best 0.533
+[2026-07-03 21:55:26]   epoch 38/200 | loss 1.4106 | train_acc 0.544 | val_acc 0.462 | best 0.533
+[2026-07-03 21:55:27]   epoch 39/200 | loss 1.4032 | train_acc 0.541 | val_acc 0.479 | best 0.533
+[2026-07-03 21:55:27]   epoch 40/200 | loss 1.3872 | train_acc 0.560 | val_acc 0.505 | best 0.533
+[2026-07-03 21:55:28]   epoch 41/200 | loss 1.3919 | train_acc 0.552 | val_acc 0.404 | best 0.533
+[2026-07-03 21:55:28]   epoch 42/200 | loss 1.3592 | train_acc 0.566 | val_acc 0.454 | best 0.533
+[2026-07-03 21:55:28] ★ epoch 43/200 | loss 1.3213 | train_acc 0.582 | val_acc 0.542 | best 0.542
+[2026-07-03 21:55:29] ★ epoch 44/200 | loss 1.3347 | train_acc 0.566 | val_acc 0.571 | best 0.571
+[2026-07-03 21:55:29]   epoch 45/200 | loss 1.2795 | train_acc 0.594 | val_acc 0.537 | best 0.571
+[2026-07-03 21:55:30] ★ epoch 46/200 | loss 1.3032 | train_acc 0.585 | val_acc 0.576 | best 0.576
+[2026-07-03 21:55:30]   epoch 47/200 | loss 1.2822 | train_acc 0.584 | val_acc 0.530 | best 0.576
+[2026-07-03 21:55:30]   epoch 48/200 | loss 1.2781 | train_acc 0.588 | val_acc 0.496 | best 0.576
+[2026-07-03 21:55:31]   epoch 49/200 | loss 1.2740 | train_acc 0.583 | val_acc 0.552 | best 0.576
+[2026-07-03 21:55:31] ★ epoch 50/200 | loss 1.2207 | train_acc 0.609 | val_acc 0.587 | best 0.587
+[2026-07-03 21:55:32]   epoch 51/200 | loss 1.2268 | train_acc 0.611 | val_acc 0.428 | best 0.587
+[2026-07-03 21:55:32]   epoch 52/200 | loss 1.2088 | train_acc 0.614 | val_acc 0.553 | best 0.587
+[2026-07-03 21:55:32]   epoch 53/200 | loss 1.2029 | train_acc 0.614 | val_acc 0.566 | best 0.587
+[2026-07-03 21:55:33]   epoch 54/200 | loss 1.1881 | train_acc 0.615 | val_acc 0.469 | best 0.587
+[2026-07-03 21:55:33]   epoch 55/200 | loss 1.2042 | train_acc 0.619 | val_acc 0.586 | best 0.587
+[2026-07-03 21:55:34] ★ epoch 56/200 | loss 1.1888 | train_acc 0.618 | val_acc 0.591 | best 0.591
+[2026-07-03 21:55:34] ★ epoch 57/200 | loss 1.1649 | train_acc 0.617 | val_acc 0.610 | best 0.610
+[2026-07-03 21:55:34]   epoch 58/200 | loss 1.1324 | train_acc 0.634 | val_acc 0.562 | best 0.610
+[2026-07-03 21:55:35]   epoch 59/200 | loss 1.1604 | train_acc 0.622 | val_acc 0.522 | best 0.610
+[2026-07-03 21:55:35]   epoch 60/200 | loss 1.1203 | train_acc 0.630 | val_acc 0.485 | best 0.610
+[2026-07-03 21:55:36]   epoch 61/200 | loss 1.0925 | train_acc 0.647 | val_acc 0.602 | best 0.610
+[2026-07-03 21:55:36] ★ epoch 62/200 | loss 1.0632 | train_acc 0.655 | val_acc 0.617 | best 0.617
+[2026-07-03 21:55:37] ★ epoch 63/200 | loss 1.0881 | train_acc 0.656 | val_acc 0.632 | best 0.632
+[2026-07-03 21:55:37]   epoch 64/200 | loss 1.0926 | train_acc 0.645 | val_acc 0.604 | best 0.632
+[2026-07-03 21:55:37]   epoch 65/200 | loss 1.0705 | train_acc 0.653 | val_acc 0.629 | best 0.632
+[2026-07-03 21:55:38]   epoch 66/200 | loss 1.0369 | train_acc 0.660 | val_acc 0.530 | best 0.632
+[2026-07-03 21:55:38] ★ epoch 67/200 | loss 1.0436 | train_acc 0.667 | val_acc 0.643 | best 0.643
+[2026-07-03 21:55:39]   epoch 68/200 | loss 1.0258 | train_acc 0.674 | val_acc 0.639 | best 0.643
+[2026-07-03 21:55:39]   epoch 69/200 | loss 1.0504 | train_acc 0.654 | val_acc 0.490 | best 0.643
+[2026-07-03 21:55:40]   epoch 70/200 | loss 0.9878 | train_acc 0.681 | val_acc 0.607 | best 0.643
+[2026-07-03 21:55:40]   epoch 71/200 | loss 1.0029 | train_acc 0.677 | val_acc 0.512 | best 0.643
+[2026-07-03 21:55:40]   epoch 72/200 | loss 1.0119 | train_acc 0.677 | val_acc 0.625 | best 0.643
+[2026-07-03 21:55:41]   epoch 73/200 | loss 0.9996 | train_acc 0.676 | val_acc 0.561 | best 0.643
+[2026-07-03 21:55:41] ★ epoch 74/200 | loss 0.9993 | train_acc 0.678 | val_acc 0.651 | best 0.651
+[2026-07-03 21:55:42]   epoch 75/200 | loss 0.9698 | train_acc 0.680 | val_acc 0.645 | best 0.651
+[2026-07-03 21:55:42]   epoch 76/200 | loss 0.9974 | train_acc 0.679 | val_acc 0.632 | best 0.651
+[2026-07-03 21:55:42]   epoch 77/200 | loss 0.9680 | train_acc 0.690 | val_acc 0.619 | best 0.651
+[2026-07-03 21:55:43] ★ epoch 78/200 | loss 0.9598 | train_acc 0.687 | val_acc 0.672 | best 0.672
+[2026-07-03 21:55:43]   epoch 79/200 | loss 0.9079 | train_acc 0.702 | val_acc 0.648 | best 0.672
+[2026-07-03 21:55:44]   epoch 80/200 | loss 0.9411 | train_acc 0.688 | val_acc 0.658 | best 0.672
+[2026-07-03 21:55:44]   epoch 81/200 | loss 0.9067 | train_acc 0.701 | val_acc 0.576 | best 0.672
+[2026-07-03 21:55:44]   epoch 82/200 | loss 0.8965 | train_acc 0.709 | val_acc 0.618 | best 0.672
+[2026-07-03 21:55:45]   epoch 83/200 | loss 0.9244 | train_acc 0.696 | val_acc 0.586 | best 0.672
+[2026-07-03 21:55:45]   epoch 84/200 | loss 0.9115 | train_acc 0.696 | val_acc 0.529 | best 0.672
+[2026-07-03 21:55:46]   epoch 85/200 | loss 0.9067 | train_acc 0.708 | val_acc 0.667 | best 0.672
+[2026-07-03 21:55:46]   epoch 86/200 | loss 0.8947 | train_acc 0.704 | val_acc 0.638 | best 0.672
+[2026-07-03 21:55:47] ★ epoch 87/200 | loss 0.8849 | train_acc 0.709 | val_acc 0.697 | best 0.697
+[2026-07-03 21:55:47]   epoch 88/200 | loss 0.8515 | train_acc 0.725 | val_acc 0.607 | best 0.697
+[2026-07-03 21:55:47]   epoch 89/200 | loss 0.9070 | train_acc 0.707 | val_acc 0.686 | best 0.697
+[2026-07-03 21:55:48]   epoch 90/200 | loss 0.9130 | train_acc 0.704 | val_acc 0.644 | best 0.697
+[2026-07-03 21:55:48]   epoch 91/200 | loss 0.8607 | train_acc 0.721 | val_acc 0.691 | best 0.697
+[2026-07-03 21:55:49]   epoch 92/200 | loss 0.8244 | train_acc 0.733 | val_acc 0.677 | best 0.697
+[2026-07-03 21:55:49]   epoch 93/200 | loss 0.8441 | train_acc 0.723 | val_acc 0.676 | best 0.697
+[2026-07-03 21:55:49] ★ epoch 94/200 | loss 0.8414 | train_acc 0.733 | val_acc 0.707 | best 0.707
+[2026-07-03 21:55:50]   epoch 95/200 | loss 0.8490 | train_acc 0.725 | val_acc 0.690 | best 0.707
+[2026-07-03 21:55:50]   epoch 96/200 | loss 0.8358 | train_acc 0.730 | val_acc 0.671 | best 0.707
+[2026-07-03 21:55:51]   epoch 97/200 | loss 0.7876 | train_acc 0.753 | val_acc 0.682 | best 0.707
+[2026-07-03 21:55:51] ★ epoch 98/200 | loss 0.8080 | train_acc 0.735 | val_acc 0.712 | best 0.712
+[2026-07-03 21:55:51]   epoch 99/200 | loss 0.8215 | train_acc 0.737 | val_acc 0.674 | best 0.712
+[2026-07-03 21:55:52]   epoch 100/200 | loss 0.8083 | train_acc 0.739 | val_acc 0.685 | best 0.712
+[2026-07-03 21:55:52]   epoch 101/200 | loss 0.8043 | train_acc 0.744 | val_acc 0.712 | best 0.712
+[2026-07-03 21:55:53]   epoch 102/200 | loss 0.7939 | train_acc 0.743 | val_acc 0.629 | best 0.712
+[2026-07-03 21:55:53]   epoch 103/200 | loss 0.7658 | train_acc 0.759 | val_acc 0.644 | best 0.712
+[2026-07-03 21:55:53] ★ epoch 104/200 | loss 0.7663 | train_acc 0.748 | val_acc 0.722 | best 0.722
+[2026-07-03 21:55:54]   epoch 105/200 | loss 0.7774 | train_acc 0.755 | val_acc 0.702 | best 0.722
+[2026-07-03 21:55:54]   epoch 106/200 | loss 0.7743 | train_acc 0.761 | val_acc 0.696 | best 0.722
+[2026-07-03 21:55:55]   epoch 107/200 | loss 0.7447 | train_acc 0.771 | val_acc 0.706 | best 0.722
+[2026-07-03 21:55:55]   epoch 108/200 | loss 0.7530 | train_acc 0.767 | val_acc 0.701 | best 0.722
+[2026-07-03 21:55:55]   epoch 109/200 | loss 0.7541 | train_acc 0.759 | val_acc 0.692 | best 0.722
+[2026-07-03 21:55:56]   epoch 110/200 | loss 0.7361 | train_acc 0.757 | val_acc 0.682 | best 0.722
+[2026-07-03 21:55:56]   epoch 111/200 | loss 0.7046 | train_acc 0.776 | val_acc 0.690 | best 0.722
+[2026-07-03 21:55:57]   epoch 112/200 | loss 0.7136 | train_acc 0.774 | val_acc 0.633 | best 0.722
+[2026-07-03 21:55:57]   epoch 113/200 | loss 0.7359 | train_acc 0.753 | val_acc 0.672 | best 0.722
+[2026-07-03 21:55:57] ★ epoch 114/200 | loss 0.7218 | train_acc 0.769 | val_acc 0.732 | best 0.732
+[2026-07-03 21:55:58]   epoch 115/200 | loss 0.7023 | train_acc 0.772 | val_acc 0.700 | best 0.732
+[2026-07-03 21:55:58]   epoch 116/200 | loss 0.7281 | train_acc 0.766 | val_acc 0.716 | best 0.732
+[2026-07-03 21:55:59] ★ epoch 117/200 | loss 0.6899 | train_acc 0.785 | val_acc 0.739 | best 0.739
+[2026-07-03 21:55:59] ★ epoch 118/200 | loss 0.6856 | train_acc 0.785 | val_acc 0.742 | best 0.742
+[2026-07-03 21:55:59]   epoch 119/200 | loss 0.7042 | train_acc 0.777 | val_acc 0.699 | best 0.742
+[2026-07-03 21:56:00] ★ epoch 120/200 | loss 0.7129 | train_acc 0.767 | val_acc 0.752 | best 0.752
+[2026-07-03 21:56:00]   epoch 121/200 | loss 0.6718 | train_acc 0.790 | val_acc 0.733 | best 0.752
+[2026-07-03 21:56:01]   epoch 122/200 | loss 0.6851 | train_acc 0.784 | val_acc 0.713 | best 0.752
+[2026-07-03 21:56:01] ★ epoch 123/200 | loss 0.6784 | train_acc 0.791 | val_acc 0.753 | best 0.753
+[2026-07-03 21:56:01]   epoch 124/200 | loss 0.6617 | train_acc 0.788 | val_acc 0.692 | best 0.753
+[2026-07-03 21:56:02]   epoch 125/200 | loss 0.6847 | train_acc 0.778 | val_acc 0.747 | best 0.753
+[2026-07-03 21:56:02]   epoch 126/200 | loss 0.6551 | train_acc 0.791 | val_acc 0.748 | best 0.753
+[2026-07-03 21:56:03]   epoch 127/200 | loss 0.6574 | train_acc 0.792 | val_acc 0.737 | best 0.753
+[2026-07-03 21:56:03]   epoch 128/200 | loss 0.6485 | train_acc 0.792 | val_acc 0.680 | best 0.753
+[2026-07-03 21:56:03] ★ epoch 129/200 | loss 0.6573 | train_acc 0.790 | val_acc 0.754 | best 0.754
+[2026-07-03 21:56:04] ★ epoch 130/200 | loss 0.6294 | train_acc 0.801 | val_acc 0.756 | best 0.756
+[2026-07-03 21:56:04]   epoch 131/200 | loss 0.6536 | train_acc 0.791 | val_acc 0.699 | best 0.756
+[2026-07-03 21:56:05]   epoch 132/200 | loss 0.6505 | train_acc 0.792 | val_acc 0.754 | best 0.756
+[2026-07-03 21:56:05]   epoch 133/200 | loss 0.6498 | train_acc 0.801 | val_acc 0.752 | best 0.756
+[2026-07-03 21:56:05]   epoch 134/200 | loss 0.6254 | train_acc 0.804 | val_acc 0.720 | best 0.756
+[2026-07-03 21:56:06]   epoch 135/200 | loss 0.6429 | train_acc 0.786 | val_acc 0.748 | best 0.756
+[2026-07-03 21:56:06] ★ epoch 136/200 | loss 0.6490 | train_acc 0.790 | val_acc 0.758 | best 0.758
+[2026-07-03 21:56:06]   epoch 137/200 | loss 0.6358 | train_acc 0.801 | val_acc 0.716 | best 0.758
+[2026-07-03 21:56:07]   epoch 138/200 | loss 0.6374 | train_acc 0.797 | val_acc 0.753 | best 0.758
+[2026-07-03 21:56:07]   epoch 139/200 | loss 0.6430 | train_acc 0.792 | val_acc 0.742 | best 0.758
+[2026-07-03 21:56:08] ★ epoch 140/200 | loss 0.6347 | train_acc 0.799 | val_acc 0.761 | best 0.761
+[2026-07-03 21:56:08]   epoch 141/200 | loss 0.6158 | train_acc 0.810 | val_acc 0.718 | best 0.761
+[2026-07-03 21:56:08] ★ epoch 142/200 | loss 0.6297 | train_acc 0.806 | val_acc 0.768 | best 0.768
+[2026-07-03 21:56:09]   epoch 143/200 | loss 0.6171 | train_acc 0.809 | val_acc 0.725 | best 0.768
+[2026-07-03 21:56:09]   epoch 144/200 | loss 0.5955 | train_acc 0.812 | val_acc 0.730 | best 0.768
+[2026-07-03 21:56:10]   epoch 145/200 | loss 0.6025 | train_acc 0.816 | val_acc 0.653 | best 0.768
+[2026-07-03 21:56:10]   epoch 146/200 | loss 0.5887 | train_acc 0.818 | val_acc 0.722 | best 0.768
+[2026-07-03 21:56:10] ★ epoch 147/200 | loss 0.6034 | train_acc 0.814 | val_acc 0.773 | best 0.773
+[2026-07-03 21:56:11]   epoch 148/200 | loss 0.5947 | train_acc 0.815 | val_acc 0.767 | best 0.773
+[2026-07-03 21:56:11]   epoch 149/200 | loss 0.6094 | train_acc 0.802 | val_acc 0.748 | best 0.773
+[2026-07-03 21:56:12]   epoch 150/200 | loss 0.5772 | train_acc 0.824 | val_acc 0.766 | best 0.773
+[2026-07-03 21:56:12]   epoch 151/200 | loss 0.5849 | train_acc 0.813 | val_acc 0.751 | best 0.773
+[2026-07-03 21:56:12]   epoch 152/200 | loss 0.5963 | train_acc 0.817 | val_acc 0.756 | best 0.773
+[2026-07-03 21:56:13]   epoch 153/200 | loss 0.5782 | train_acc 0.817 | val_acc 0.759 | best 0.773
+[2026-07-03 21:56:13] ★ epoch 154/200 | loss 0.5897 | train_acc 0.815 | val_acc 0.784 | best 0.784
+[2026-07-03 21:56:13]   epoch 155/200 | loss 0.5940 | train_acc 0.813 | val_acc 0.780 | best 0.784
+[2026-07-03 21:56:14]   epoch 156/200 | loss 0.5808 | train_acc 0.822 | val_acc 0.774 | best 0.784
+[2026-07-03 21:56:14]   epoch 157/200 | loss 0.5801 | train_acc 0.822 | val_acc 0.768 | best 0.784
+[2026-07-03 21:56:15]   epoch 158/200 | loss 0.5743 | train_acc 0.817 | val_acc 0.782 | best 0.784
+[2026-07-03 21:56:15]   epoch 159/200 | loss 0.5644 | train_acc 0.823 | val_acc 0.777 | best 0.784
+[2026-07-03 21:56:15]   epoch 160/200 | loss 0.5823 | train_acc 0.820 | val_acc 0.778 | best 0.784
+[2026-07-03 21:56:16]   epoch 161/200 | loss 0.5664 | train_acc 0.827 | val_acc 0.773 | best 0.784
+[2026-07-03 21:56:16]   epoch 162/200 | loss 0.5624 | train_acc 0.829 | val_acc 0.753 | best 0.784
+[2026-07-03 21:56:17]   epoch 163/200 | loss 0.5763 | train_acc 0.819 | val_acc 0.783 | best 0.784
+[2026-07-03 21:56:17]   epoch 164/200 | loss 0.5563 | train_acc 0.821 | val_acc 0.769 | best 0.784
+[2026-07-03 21:56:17]   epoch 165/200 | loss 0.5713 | train_acc 0.823 | val_acc 0.783 | best 0.784
+[2026-07-03 21:56:18]   epoch 166/200 | loss 0.5547 | train_acc 0.828 | val_acc 0.752 | best 0.784
+[2026-07-03 21:56:18]   epoch 167/200 | loss 0.5590 | train_acc 0.832 | val_acc 0.748 | best 0.784
+[2026-07-03 21:56:19]   epoch 168/200 | loss 0.5313 | train_acc 0.839 | val_acc 0.782 | best 0.784
+[2026-07-03 21:56:19]   epoch 169/200 | loss 0.5676 | train_acc 0.831 | val_acc 0.773 | best 0.784
+[2026-07-03 21:56:19]   epoch 170/200 | loss 0.5535 | train_acc 0.833 | val_acc 0.774 | best 0.784
+[2026-07-03 21:56:20]   epoch 171/200 | loss 0.5579 | train_acc 0.827 | val_acc 0.778 | best 0.784
+[2026-07-03 21:56:20]   epoch 172/200 | loss 0.5510 | train_acc 0.824 | val_acc 0.778 | best 0.784
+[2026-07-03 21:56:20] ★ epoch 173/200 | loss 0.5432 | train_acc 0.828 | val_acc 0.790 | best 0.790
+[2026-07-03 21:56:21]   epoch 174/200 | loss 0.5368 | train_acc 0.837 | val_acc 0.747 | best 0.790
+[2026-07-03 21:56:21]   epoch 175/200 | loss 0.5429 | train_acc 0.831 | val_acc 0.788 | best 0.790
+[2026-07-03 21:56:22]   epoch 176/200 | loss 0.5399 | train_acc 0.835 | val_acc 0.756 | best 0.790
+[2026-07-03 21:56:22]   epoch 177/200 | loss 0.5392 | train_acc 0.840 | val_acc 0.777 | best 0.790
+[2026-07-03 21:56:22]   epoch 178/200 | loss 0.5592 | train_acc 0.836 | val_acc 0.775 | best 0.790
+[2026-07-03 21:56:23]   epoch 179/200 | loss 0.5515 | train_acc 0.833 | val_acc 0.789 | best 0.790
+[2026-07-03 21:56:23] ★ epoch 180/200 | loss 0.5567 | train_acc 0.826 | val_acc 0.794 | best 0.794
+[2026-07-03 21:56:24]   epoch 181/200 | loss 0.5482 | train_acc 0.825 | val_acc 0.761 | best 0.794
+[2026-07-03 21:56:24]   epoch 182/200 | loss 0.5367 | train_acc 0.831 | val_acc 0.758 | best 0.794
+[2026-07-03 21:56:24]   epoch 183/200 | loss 0.5357 | train_acc 0.836 | val_acc 0.788 | best 0.794
+[2026-07-03 21:56:25]   epoch 184/200 | loss 0.5529 | train_acc 0.823 | val_acc 0.761 | best 0.794
+[2026-07-03 21:56:25]   epoch 185/200 | loss 0.5363 | train_acc 0.841 | val_acc 0.787 | best 0.794
+[2026-07-03 21:56:26] ★ epoch 186/200 | loss 0.5364 | train_acc 0.837 | val_acc 0.799 | best 0.799
+[2026-07-03 21:56:26]   epoch 187/200 | loss 0.5437 | train_acc 0.831 | val_acc 0.777 | best 0.799
+[2026-07-03 21:56:26]   epoch 188/200 | loss 0.5379 | train_acc 0.837 | val_acc 0.762 | best 0.799
+[2026-07-03 21:56:27]   epoch 189/200 | loss 0.5538 | train_acc 0.834 | val_acc 0.762 | best 0.799
+[2026-07-03 21:56:27]   epoch 190/200 | loss 0.5265 | train_acc 0.839 | val_acc 0.761 | best 0.799
+[2026-07-03 21:56:27]   epoch 191/200 | loss 0.5232 | train_acc 0.843 | val_acc 0.793 | best 0.799
+[2026-07-03 21:56:28]   epoch 192/200 | loss 0.5520 | train_acc 0.833 | val_acc 0.741 | best 0.799
+[2026-07-03 21:56:28]   epoch 193/200 | loss 0.5473 | train_acc 0.826 | val_acc 0.783 | best 0.799
+[2026-07-03 21:56:29]   epoch 194/200 | loss 0.5371 | train_acc 0.834 | val_acc 0.788 | best 0.799
+[2026-07-03 21:56:29]   epoch 195/200 | loss 0.5291 | train_acc 0.840 | val_acc 0.788 | best 0.799
+[2026-07-03 21:56:29]   epoch 196/200 | loss 0.5172 | train_acc 0.844 | val_acc 0.774 | best 0.799
+[2026-07-03 21:56:30]   epoch 197/200 | loss 0.5281 | train_acc 0.839 | val_acc 0.792 | best 0.799
+[2026-07-03 21:56:30]   epoch 198/200 | loss 0.5286 | train_acc 0.839 | val_acc 0.784 | best 0.799
+[2026-07-03 21:56:31]   epoch 199/200 | loss 0.5575 | train_acc 0.818 | val_acc 0.779 | best 0.799
+[2026-07-03 21:56:31] ============================================================
+[2026-07-03 21:56:31] 训练完成！用时 80.7s | 最佳 val_acc=0.799
+[2026-07-03 21:56:31] 最佳模型已存：/home/longjun/aa_workspace/outputs/emg_demo_best.pt
+[2026-07-03 21:56:31] 日志已存：/home/longjun/aa_workspace/logs/emg_demo.log
+[2026-07-03 21:56:31] 进程自然结束。若你在 tmux 里看到这里，可 Ctrl+a d 安全离开。
+[2026-07-03 21:56:31] ============================================================

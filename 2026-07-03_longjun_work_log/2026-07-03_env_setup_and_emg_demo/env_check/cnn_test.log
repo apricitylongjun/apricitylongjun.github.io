@@ -1,0 +1,14 @@
+torch 2.12.1+cu130
+device: cuda NVIDIA GeForce RTX 5080
+=== 训练开始（随机数据，验证链路；loss 不代表精度）===
+  epoch0 batch00 loss=2.2852
+  epoch0 batch10 loss=2.3306
+  epoch0 batch20 loss=2.3104
+  epoch0 batch30 loss=2.3021
+epoch0 平均loss=2.3136
+  epoch1 batch00 loss=2.2962
+  epoch1 batch10 loss=2.2913
+  epoch1 batch20 loss=2.2886
+  epoch1 batch30 loss=2.2990
+epoch1 平均loss=2.2922
+CNN_TEST_DONE: 前向+反向+优化器+GPU 全链路正常 ✅

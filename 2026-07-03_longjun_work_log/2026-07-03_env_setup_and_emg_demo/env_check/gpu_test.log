@@ -1,0 +1,6 @@
+python 3.12.3 | torch 2.12.1+cu130 | 编译CUDA 13.0
+cuda.is_available(): True
+  GPU0: NVIDIA GeForce RTX 5080
+  arch_list: ['sm_75', 'sm_80', 'sm_86', 'sm_90', 'sm_100', 'sm_120']
+matmul 4096x4096 x20: 平均 3.41 ms/次 on cuda (~40.3 TFLOPS)
+GPU_TEST_CUDA_OK
