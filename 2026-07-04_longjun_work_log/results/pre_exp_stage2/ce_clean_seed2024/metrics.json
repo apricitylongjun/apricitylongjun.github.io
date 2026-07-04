@@ -1,0 +1,15 @@
+{
+  "backbone": "ResNet1D",
+  "method": "ce",
+  "noise_rate": 0.0,
+  "setting": "clean",
+  "seed": 2024,
+  "best_epoch": 35,
+  "best_val_acc": 0.48854961832061067,
+  "test": {
+    "accuracy": 0.5088832487309645,
+    "balanced_accuracy": 0.5077170120134402,
+    "macro_f1": 0.49516770236803564
+  },
+  "time_s": 40.9
+}

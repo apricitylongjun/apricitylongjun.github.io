@@ -1,0 +1,12 @@
+{
+  "setting": "noise20",
+  "method": "ours_robust",
+  "best_epoch": 25,
+  "best_val_acc": 0.33078880407124683,
+  "test": {
+    "accuracy": 0.3210659898477157,
+    "balanced_accuracy": 0.3265067366641454,
+    "macro_f1": 0.3108131745357614
+  },
+  "time_s": 12.5
+}

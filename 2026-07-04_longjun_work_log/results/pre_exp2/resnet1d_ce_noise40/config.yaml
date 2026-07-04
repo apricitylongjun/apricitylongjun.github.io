@@ -1,0 +1,14 @@
+batch: 128
+data_source: 'B: preprocess_features 4096-dim (同第一轮)'
+epochs: 40
+eval_policy: select by val_acc; test once at end
+lam_cons: 0.5
+lr: 0.001
+method: ce
+model: resnet1d
+n_classes: 34
+noise_std: 0.1
+seed: 42
+setting: noise40
+w_floor: 0.1
+warmup: 10

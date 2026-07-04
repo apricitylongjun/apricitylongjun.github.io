@@ -1,0 +1,13 @@
+{
+  "model": "resnet1d",
+  "method": "ce",
+  "setting": "clean",
+  "best_epoch": 39,
+  "best_val_acc": 0.4580152671755725,
+  "test": {
+    "accuracy": 0.4720812182741117,
+    "balanced_accuracy": 0.4682106738411882,
+    "macro_f1": 0.46055927467568614
+  },
+  "time_s": 40.9
+}

@@ -1,0 +1,1 @@
+cd ~/aa_workspace && source .venv/bin/activate && CUDA_VISIBLE_DEVICES=0 python code/pre_exp_stage2_train.py --method ce --setting clean --seed 2026 --epochs 40 --batch 128 --lr 0.001 --ct_warmup 10

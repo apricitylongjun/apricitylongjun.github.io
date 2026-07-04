@@ -1,0 +1,1 @@
+cd ~/aa_workspace && source .venv/bin/activate && CUDA_VISIBLE_DEVICES=0 python code/pre_exp_train_ce.py --setting noise20 --epochs 30 --batch 128 --lr 0.001 --seed 42

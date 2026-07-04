@@ -1,0 +1,12 @@
+{
+  "setting": "noise40",
+  "method": "CE",
+  "best_epoch": 18,
+  "best_val_acc": 0.25318066157760816,
+  "test": {
+    "accuracy": 0.2068527918781726,
+    "balanced_accuracy": 0.21426103845252636,
+    "macro_f1": 0.2010944036015458
+  },
+  "time_s": 9.1
+}

@@ -1,0 +1,12 @@
+batch: 128
+coteaching_reports: f1 network
+ct_warmup: 10
+epochs: 40
+eval_policy: select by val_acc; test once at end
+lr: 0.001
+method: ce
+model: ResNet1D
+n_classes: 34
+noise_rate: 0.0
+seed: 42
+setting: clean

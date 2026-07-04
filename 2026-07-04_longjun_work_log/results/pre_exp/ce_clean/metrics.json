@@ -1,0 +1,12 @@
+{
+  "setting": "clean",
+  "method": "CE",
+  "best_epoch": 28,
+  "best_val_acc": 0.45165394402035625,
+  "test": {
+    "accuracy": 0.47715736040609136,
+    "balanced_accuracy": 0.4755733821765066,
+    "macro_f1": 0.47533540359124893
+  },
+  "time_s": 9.1
+}

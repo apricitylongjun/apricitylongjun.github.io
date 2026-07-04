@@ -1,0 +1,11 @@
+batch: 128
+data_source: 'B: preprocess_features 4096-dim'
+epochs: 30
+eval_policy: select by val_acc; test evaluated once at end
+loss: CrossEntropy
+lr: 0.001
+model: SimpleCNN1D
+n_classes: 34
+optimizer: Adam
+seed: 42
+setting: clean

@@ -1,0 +1,6 @@
+setting,method,noise_rate,accuracy,balanced_accuracy,macro_f1
+clean,CE,0.0,0.4772,0.4756,0.4753
+noise20,CE,0.2,0.3477,0.3531,0.3397
+noise40,CE,0.4,0.2069,0.2143,0.2011
+noise20,ours,0.2,0.3211,0.3265,0.3108
+noise40,ours,0.4,0.2157,0.2282,0.2095

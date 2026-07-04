@@ -1,0 +1,15 @@
+{
+  "step": 3,
+  "date": "2026-07-04",
+  "seed": 42,
+  "noise_type": "symmetric (class-independent)",
+  "noise_rate_setting": 0.2,
+  "n_classes": 34,
+  "n_train": 6293,
+  "n_corrupted": 1300,
+  "actual_corrupt_ratio": 0.20657873828062928,
+  "empirical_flip_ratio": 0.20657873828062928,
+  "applied_to": "train labels ONLY; val/test labels unchanged",
+  "label_space": "0..33 (remapped from original 1..34)",
+  "depends_on": "experiments/pre_exp/split_data.npz"
+}

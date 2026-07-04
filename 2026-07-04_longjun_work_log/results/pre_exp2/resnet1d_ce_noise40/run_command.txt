@@ -1,0 +1,1 @@
+cd ~/aa_workspace && source .venv/bin/activate && CUDA_VISIBLE_DEVICES=0 python code/pre_exp2_train.py --model resnet1d --method ce --setting noise40 --epochs 40 --batch 128 --lr 0.001 --warmup 10 --lam_cons 0.5 --noise_std 0.1 --w_floor 0.1 --seed 42
