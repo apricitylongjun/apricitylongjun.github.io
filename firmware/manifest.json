@@ -1,12 +1,12 @@
 {
-  "schema": 1,
-  "device": "APM32F103TBU6",
-  "slot": "app2",
-  "address": "0x08012000",
-  "version": "1.0.2",
-  "filename": "app2_v1_0_2.bin",
-  "size": 9160,
-  "crc32": "BDA08704",
-  "sha256": "81D7C27434B3EA4BDFFE1C618BE1EE480569AF1EFF76013D59A094B2FE3EC2D9",
-  "url": "https://apricitylongjun.github.io/firmware/app2_v1_0_2.bin"
+    "schema":  1,
+    "device":  "APM32F103TBU6",
+    "slot":  "app2",
+    "address":  "0x08012000",
+    "version":  "1.0.3",
+    "filename":  "app2_v1_0_3.bin",
+    "size":  9248,
+    "crc32":  "72DAF2EC",
+    "sha256":  "B26B2D32EDE0E79A782D2147E595CCF0E0A9A2B8AB9AAB0832C9B362BBFA947B",
+    "url":  "https://apricitylongjun.github.io/firmware/app2_v1_0_3.bin"
 }
