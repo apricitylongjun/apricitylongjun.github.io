@@ -1,0 +1,20 @@
+{
+    "schema":  1,
+    "hardware":  "PT8-STM32F407VET6",
+    "version":  "1.0.0.13",
+    "releaseCounter":  14,
+    "signedAlgorithm":  "ECDSA-P256-SHA256",
+    "signatureEncoding":  "raw-r-s-64-bytes",
+    "slotA":  {
+                  "descriptorUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-a/descriptor.bin",
+                  "imageUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-a/image.bin",
+                  "imageBytes":  90616,
+                  "sha256":  "B2FF657593FFE0EE0BE436196279343C20AEBC1D9E2C7AC34F799EEB4F8FAE41"
+              },
+    "slotB":  {
+                  "descriptorUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-b/descriptor.bin",
+                  "imageUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-b/image.bin",
+                  "imageBytes":  90616,
+                  "sha256":  "2F42C2D8CB8039E31964A7590238531A737862D0B10A77429D4B56235648D8E1"
+              }
+}
