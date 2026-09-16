@@ -6,14 +6,14 @@
     "signedAlgorithm":  "ECDSA-P256-SHA256",
     "signatureEncoding":  "raw-r-s-64-bytes",
     "slotA":  {
-                  "descriptorUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-a/descriptor.bin",
-                  "imageUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-a/image.bin",
+                  "descriptorUrl":  "https://apricitylongjun.github.io/firmware/pt8/releases/1.0.0.18-r19/slot-a/descriptor.bin",
+                  "imageUrl":  "https://apricitylongjun.github.io/firmware/pt8/releases/1.0.0.18-r19/slot-a/image.bin",
                   "imageBytes":  89304,
                   "sha256":  "3C183F8523D679E8353D8330FF1ADBEBF2A3B1ED016499ED22AD7269DD422374"
               },
     "slotB":  {
-                  "descriptorUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-b/descriptor.bin",
-                  "imageUrl":  "https://apricitylongjun.github.io/firmware/pt8/slot-b/image.bin",
+                  "descriptorUrl":  "https://apricitylongjun.github.io/firmware/pt8/releases/1.0.0.18-r19/slot-b/descriptor.bin",
+                  "imageUrl":  "https://apricitylongjun.github.io/firmware/pt8/releases/1.0.0.18-r19/slot-b/image.bin",
                   "imageBytes":  89312,
                   "sha256":  "D23610BADED741A24B9117B1F7F7ED17549CAF14D386F4BA02A9EC147923CDAD"
               }
