@@ -33,6 +33,22 @@
     z-index: 1;
   }
 
+  .setting-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 18px;
+    z-index: 60;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffb700, #ffd700);
+    color: #000;
+    border: none;
+    font-size: 24px;
+    font-weight: 800;
+    box-shadow: 0 0 16px rgba(255,215,0,0.55);
+  }
+
   .screen {
     position: relative;
     z-index: 3;
@@ -65,8 +81,8 @@
     letter-spacing: 2px;
     padding: 6px 12px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
   }
 
   .status.working {
@@ -77,21 +93,22 @@
 
   .status.resting {
     color: #fbbf24;
-    border-color: rgba(251, 191, 36, 0.4);
-    box-shadow: 0 0 14px rgba(251, 191, 36, 0.2);
+    border-color: rgba(251,191,36,0.4);
+    box-shadow: 0 0 14px rgba(251,191,36,0.2);
   }
 
-  .center-title{
-    font-size:26px;
-    color:#ffd700;
-    letter-spacing:4px;
-    text-shadow:0 0 16px #ffd700;
-    margin-bottom:12px;
+  .center-title {
+    font-size: 26px;
+    color: #ffd700;
+    letter-spacing: 4px;
+    text-shadow: 0 0 16px #ffd700;
+    margin-bottom: 12px;
   }
-  .per-sec-text{
-    font-size:14px;
-    color:#ffe699;
-    margin-bottom:20px;
+
+  .per-sec-text {
+    font-size: 14px;
+    color: #ffe699;
+    margin-bottom: 20px;
   }
 
   .center {
@@ -131,7 +148,7 @@
     border: 1px solid rgba(255,215,0,0.35);
     box-shadow:
       inset 0 0 20px rgba(255,215,0,0.14),
-      0 10px 26px rgba(0, 0, 0, 0.6);
+      0 10px 26px rgba(0,0,0,0.6);
     overflow: hidden;
     transform-style: preserve-3d;
   }
@@ -149,12 +166,12 @@
 
   .digit-window::before {
     top: 0;
-    background: linear-gradient(180deg, rgba(5, 5, 8, 0.95), transparent);
+    background: linear-gradient(180deg, rgba(5,5,8,0.95), transparent);
   }
 
   .digit-window::after {
     bottom: 0;
-    background: linear-gradient(0deg, rgba(5, 5, 8, 0.95), transparent);
+    background: linear-gradient(0deg, rgba(5,5,8,0.95), transparent);
   }
 
   .digit-track {
@@ -195,30 +212,33 @@
     50% { opacity: 0.5; }
   }
 
-  .progress-wrap{
+  .progress-wrap {
     width: 80%;
-    max-width:340px;
-    margin-top:10px;
+    max-width: 340px;
+    margin-top: 10px;
   }
-  .progress-label{
-    font-size:13px;
-    color:#ffe699;
-    margin-bottom:4px;
-    display:flex;
-    justify-content:space-between;
+
+  .progress-label {
+    font-size: 13px;
+    color: #ffe699;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
   }
-  .progress-bar-bg{
-    width:100%;
-    height:8px;
-    background:rgba(255,255,255,0.1);
-    border-radius:99px;
-    overflow:hidden;
+
+  .progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    overflow: hidden;
   }
-  .progress-bar-fill{
-    height:100%;
-    background:linear-gradient(90deg,#ffb700,#ffd700);
-    border-radius:99px;
-    box-shadow:0 0 8px #ffd700;
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffb700, #ffd700);
+    border-radius: 99px;
+    box-shadow: 0 0 8px #ffd700;
   }
 
   .bottom {
@@ -280,10 +300,113 @@
       transparent);
     filter: blur(1px);
   }
+
+  /* 设置弹窗 */
+  .modal-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.72);
+    z-index: 80;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-mask.show {
+    display: flex;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 420px;
+    background: #0a0805;
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 0 30px rgba(255,215,0,0.25);
+  }
+
+  .modal h2 {
+    text-align: center;
+    color: #ffd700;
+    text-shadow: 0 0 12px #ffd700;
+    margin-bottom: 18px;
+    letter-spacing: 2px;
+  }
+
+  .form-card {
+    background: rgba(255,215,0,0.06);
+    border: 1px solid rgba(255,215,0,0.22);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .form-card label {
+    display: block;
+    font-size: 14px;
+    color: #ffe699;
+    margin-bottom: 6px;
+  }
+
+  .form-card input {
+    width: 100%;
+    height: 44px;
+    background: #09090c;
+    border: 1px solid rgba(255,215,0,0.35);
+    border-radius: 10px;
+    color: #ffd700;
+    font-size: 17px;
+    padding: 0 12px;
+    outline: none;
+  }
+  .radio-row{
+    display:flex;gap:16px;margin-top:6px;
+  }
+  .radio-item{
+    display:flex;align-items:center;gap:6px;
+  }
+  .radio-item input{
+    width:auto;height:auto;
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .btn-group button {
+    flex: 1;
+    height: 48px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .btn-save {
+    background: linear-gradient(90deg, #ffb700, #ffd700);
+    color: #000;
+  }
+
+  .btn-close {
+    background: rgba(255,255,255,0.08);
+    color: #ffe699;
+    border: 1px solid rgba(255,215,0,0.3);
+  }
 </style>
 </head>
 <body>
 
+<button class="setting-btn" id="settingBtn">⚙</button>
 <canvas id="moneyBg"></canvas>
 
 <div class="screen">
@@ -314,19 +437,184 @@
       <div class="remain-text" id="remainText">继续搬砖，早日下班</div>
     </div>
     <div class="glow-bar"></div>
-    <div class="tip">点击屏幕保持常亮</div>
+    <div class="tip">点击屏幕保持常亮 · 右下角设置参数</div>
+  </div>
+</div>
+
+<!-- 设置弹窗 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <h2>参数设置</h2>
+
+    <div class="form-card">
+      <label>收入计算模式</label>
+      <div class="radio-row">
+        <div class="radio-item">
+          <input type="radio" name="mode" id="modeMonth" value="month">
+          <label for="modeMonth">按月薪</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" name="mode" id="modeYear" value="year">
+          <label for="modeYear">按年薪总包</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card" id="inputMonthWrap">
+      <label>月薪（元）</label>
+      <input id="cfgSalary" type="number" step="0.01" inputmode="decimal">
+    </div>
+
+    <div class="form-card" id="inputYearWrap" style="display:none">
+      <label>年薪总包(含年终奖/项目奖，元)</label>
+      <input id="cfgYearTotal" type="number" step="0.01" inputmode="decimal">
+    </div>
+
+    <div class="form-card">
+      <label>每月工作日</label>
+      <input id="cfgDays" type="number" step="0.1" inputmode="decimal">
+    </div>
+
+    <div class="form-card">
+      <label>上午时段</label>
+      <div class="row2">
+        <input id="cfgMorningStart" type="time">
+        <input id="cfgMorningEnd" type="time">
+      </div>
+    </div>
+
+    <div class="form-card">
+      <label>下午时段</label>
+      <div class="row2">
+        <input id="cfgAfternoonStart" type="time">
+        <input id="cfgAfternoonEnd" type="time">
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-save" id="cfgSaveBtn">保存生效</button>
+      <button class="btn-close" id="cfgCloseBtn">关闭</button>
+    </div>
   </div>
 </div>
 
 <script>
-  // ========== 薪资配置参数 ==========
-  const MONTH_SALARY = 20000;
-  const WORK_DAY_MONTH = 22;
-  const DAY_SALARY = MONTH_SALARY / WORK_DAY_MONTH;
-  const TOTAL_WORK_SEC = 8 * 3600;
-  const MONEY_PER_SEC = DAY_SALARY / TOTAL_WORK_SEC;
+  // ========== 默认配置 ==========
+  const defaultCfg = {
+    calcMode: "month", // month=月薪 year=年薪总包
+    monthSalary: 20000,
+    yearTotal:300000,
+    workDayMonth: 22,
+    morningStart: "08:00",
+    morningEnd: "12:00",
+    afternoonStart: "13:30",
+    afternoonEnd: "17:30"
+  };
 
-  // DOM元素
+  // ========== 读取本地配置 ==========
+  function loadCfg() {
+    const str = localStorage.getItem("salaryConfig");
+    if (str) {
+      try {
+        return Object.assign({}, defaultCfg, JSON.parse(str));
+      } catch (e) {
+        return defaultCfg;
+      }
+    }
+    return defaultCfg;
+  }
+
+  let cfg = loadCfg();
+
+  // ========== 切换单选，显示对应输入框 ==========
+  const modeMonth = document.getElementById('modeMonth');
+  const modeYear = document.getElementById('modeYear');
+  const inputMonthWrap = document.getElementById('inputMonthWrap');
+  const inputYearWrap = document.getElementById('inputYearWrap');
+
+  function toggleInputMode(){
+    if(cfg.calcMode === "month"){
+      modeMonth.checked=true;
+      inputMonthWrap.style.display="block";
+      inputYearWrap.style.display="none";
+    }else{
+      modeYear.checked=true;
+      inputMonthWrap.style.display="none";
+      inputYearWrap.style.display="block";
+    }
+  }
+  modeMonth.onchange = ()=>{
+    cfg.calcMode = "month";
+    toggleInputMode();
+  }
+  modeYear.onchange = ()=>{
+    cfg.calcMode = "year";
+    toggleInputMode();
+  }
+
+  // ========== 时间工具 ==========
+  function timeToSec(t) {
+    const [h, m] = t.split(":").map(Number);
+    return h * 3600 + m * 60;
+  }
+
+  function updateConfigFromUI() {
+    cfg.calcMode = modeMonth.checked ? "month":"year";
+    cfg.monthSalary = Math.max(0, Number(document.getElementById("cfgSalary").value) || 0);
+    cfg.yearTotal = Math.max(0, Number(document.getElementById("cfgYearTotal").value) || 0);
+    cfg.workDayMonth = Math.max(0.1, Number(document.getElementById("cfgDays").value) || 1);
+    cfg.morningStart = document.getElementById("cfgMorningStart").value || "08:00";
+    cfg.morningEnd = document.getElementById("cfgMorningEnd").value || "12:00";
+    cfg.afternoonStart = document.getElementById("cfgAfternoonStart").value || "13:30";
+    cfg.afternoonEnd = document.getElementById("cfgAfternoonEnd").value || "17:30";
+    localStorage.setItem("salaryConfig", JSON.stringify(cfg));
+  }
+
+  function fillConfigToUI() {
+    document.getElementById("cfgSalary").value = cfg.monthSalary;
+    document.getElementById("cfgYearTotal").value = cfg.yearTotal;
+    document.getElementById("cfgDays").value = cfg.workDayMonth;
+    document.getElementById("cfgMorningStart").value = cfg.morningStart;
+    document.getElementById("cfgMorningEnd").value = cfg.morningEnd;
+    document.getElementById("cfgAfternoonStart").value = cfg.afternoonStart;
+    document.getElementById("cfgAfternoonEnd").value = cfg.afternoonEnd;
+    toggleInputMode();
+  }
+
+  // ========== 计算参数 ==========
+  function recalcParams() {
+    const morningStartSec = timeToSec(cfg.morningStart);
+    const morningEndSec = timeToSec(cfg.morningEnd);
+    const afternoonStartSec = timeToSec(cfg.afternoonStart);
+    const afternoonEndSec = timeToSec(cfg.afternoonEnd);
+
+    const morningDuration = Math.max(0, morningEndSec - morningStartSec);
+    const afternoonDuration = Math.max(0, afternoonEndSec - afternoonStartSec);
+
+    let monthSalary;
+    if(cfg.calcMode === "year"){
+      //年薪总包转月薪：年薪 /12
+      monthSalary = cfg.yearTotal /12;
+    }else{
+      monthSalary = cfg.monthSalary;
+    }
+
+    return {
+      morningStartSec,
+      morningEndSec,
+      afternoonStartSec,
+      afternoonEndSec,
+      morningDuration,
+      afternoonDuration,
+      totalWorkSec: morningDuration + afternoonDuration,
+      daySalary: monthSalary / cfg.workDayMonth,
+      moneyPerSec: (monthSalary / cfg.workDayMonth) / (morningDuration + afternoonDuration)
+    };
+  }
+
+  let params = recalcParams();
+
+  // ========== DOM ==========
   const $time = document.getElementById("nowTime");
   const $state = document.getElementById("workState");
   const $display = document.getElementById("moneyDisplay");
@@ -335,8 +623,9 @@
   const $perSecInfo = document.getElementById("perSecInfo");
   const $progressPercent = document.getElementById("progressPercent");
   const $progressFill = document.getElementById("progressFill");
+  const $modalMask = document.getElementById("modalMask");
 
-  // 屏幕常亮
+  // ========== 屏幕常亮 ==========
   let wakeLock = null;
   async function requestWakeLock() {
     if ("wakeLock" in navigator) {
@@ -350,7 +639,30 @@
     if (wakeLock && document.visibilityState === "visible") requestWakeLock();
   });
 
-  // 数字面板：3整数位 . 4小数位
+  // ========== 设置弹窗 ==========
+  document.getElementById("settingBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    fillConfigToUI();
+    $modalMask.classList.add("show");
+  });
+
+  document.getElementById("cfgCloseBtn").addEventListener("click", () => {
+    $modalMask.classList.remove("show");
+  });
+
+  document.getElementById("cfgSaveBtn").addEventListener("click", () => {
+    updateConfigFromUI();
+    params = recalcParams();
+    $modalMask.classList.remove("show");
+  });
+
+  $modalMask.addEventListener("click", (e) => {
+    if (e.target === $modalMask) {
+      $modalMask.classList.remove("show");
+    }
+  });
+
+  // ========== 数字显示：3位整数 + 4位小数 ==========
   const digitConfig = [
     { type: "int", pos: 2 },
     { type: "int", pos: 1 },
@@ -364,6 +676,9 @@
   const digitWindows = [];
 
   function initDisplay() {
+    $display.innerHTML = "";
+    digitWindows.length = 0;
+
     const symbol = document.createElement("div");
     symbol.className = "money-symbol";
     symbol.textContent = "¥";
@@ -377,50 +692,29 @@
         $display.appendChild(dot);
         return;
       }
+
       const win = document.createElement("div");
       win.className = "digit-window";
       const track = document.createElement("div");
       track.className = "digit-track";
+
       for (let i = 0; i < 10; i++) {
         const cell = document.createElement("div");
         cell.className = "digit-cell";
         cell.textContent = i;
         track.appendChild(cell);
       }
+
       win.appendChild(track);
       $display.appendChild(win);
-      digitWindows.push({ cfg, win, track, currentIndex: 0, targetIndex: 0 });
+      digitWindows.push({
+        cfg,
+        win,
+        track,
+        currentIndex: 0,
+        targetIndex: 0
+      });
     });
-  }
-
-  // 核心：根据当前时分秒毫秒，计算当日累计有效工作秒
-  function getWorkSeconds(h, m, sMs) {
-    let totalSec = 0;
-    const nowSec = h * 3600 + m * 60 + sMs;
-
-    // 上午 08:00 - 12:00
-    const morningStart = 8 * 3600;
-    const morningEnd = 12 * 3600;
-    if (nowSec > morningStart) {
-      totalSec += Math.min(nowSec, morningEnd) - morningStart;
-    }
-
-    // 下午 13:30 -17:30
-    const afternoonStart = 13 * 3600 + 30 * 60;
-    const afternoonEnd = 17 * 3600 + 30 * 60;
-    if (nowSec > afternoonStart) {
-      totalSec += Math.min(nowSec, afternoonEnd) - afternoonStart;
-    }
-    return Math.min(totalSec, TOTAL_WORK_SEC);
-  }
-
-  function isWorkingHour(h, m) {
-    const totalMin = h * 60 + m;
-    const mStart = 8 * 60;
-    const mEnd = 12 * 60;
-    const aStart = 13 * 60 + 30;
-    const aEnd = 17 * 60 + 30;
-    return (totalMin >= mStart && totalMin < mEnd) || (totalMin >= aStart && totalMin < aEnd);
   }
 
   function updateDigitPanel(moneyVal) {
@@ -430,14 +724,17 @@
     const decStr = decRaw.padEnd(4, "0");
     const digitsList = [...intStr.split(""), ".", ...decStr.split("")];
     let ptr = 0;
+
     digitWindows.forEach(dw => {
-      if (digitsList[ptr] === ".") { ptr++; return; }
+      if (digitsList[ptr] === ".") {
+        ptr++;
+        return;
+      }
       dw.targetIndex = Number(digitsList[ptr]);
       ptr++;
     });
   }
 
-  // 数字滚动动画，高刷无延迟
   function runDigitAnimation() {
     digitWindows.forEach(dw => {
       if (dw.currentIndex === dw.targetIndex) return;
@@ -449,7 +746,36 @@
     requestAnimationFrame(runDigitAnimation);
   }
 
-  // 主循环，和屏幕刷新率同步
+  // ========== 核心计算：按真实时间重算 ==========
+  function getWorkSeconds(h, m, sMs) {
+    if (params.totalWorkSec <= 0) return 0;
+
+    let totalSec = 0;
+    const nowSec = h * 3600 + m * 60 + sMs;
+
+    if (nowSec > params.morningStartSec) {
+      totalSec += Math.min(nowSec, params.morningEndSec) - params.morningStartSec;
+    }
+
+    if (nowSec > params.afternoonStartSec) {
+      totalSec += Math.min(nowSec, params.afternoonEndSec) - params.afternoonStartSec;
+    }
+
+    return Math.min(Math.max(0, totalSec), params.totalWorkSec);
+  }
+
+  function isWorkingHour(h, m) {
+    const totalMin = h * 60 + m;
+    const mStart = params.morningStartSec / 60;
+    const mEnd = params.morningEndSec / 60;
+    const aStart = params.afternoonStartSec / 60;
+    const aEnd = params.afternoonEndSec / 60;
+
+    return (totalMin >= mStart && totalMin < mEnd) ||
+           (totalMin >= aStart && totalMin < aEnd);
+  }
+
+  // ========== 主循环：高刷实时更新 ==========
   function mainLoop() {
     const now = new Date();
     const h = now.getHours();
@@ -458,17 +784,22 @@
     const ms = now.getMilliseconds();
 
     $time.textContent = now.toLocaleString("zh-CN", {
-      year: "numeric", month: "2-digit", day: "2-digit",
-      hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit"
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
     }) + "." + String(ms).padStart(3, "0");
 
     const inWork = isWorkingHour(h, m);
     const workSecTotal = getWorkSeconds(h, m, s + ms / 1000);
-    const earnedMoney = workSecTotal * MONEY_PER_SEC;
-    const progressRate = (workSecTotal / TOTAL_WORK_SEC) * 100;
+    const earnedMoney = params.totalWorkSec > 0 ? workSecTotal * params.moneyPerSec : 0;
+    const progressRate = params.totalWorkSec > 0 ? (workSecTotal / params.totalWorkSec) * 100 : 0;
 
-    $perSecInfo.innerText = `每秒赚：¥${MONEY_PER_SEC.toFixed(4)}`;
-    $progressPercent.innerText = `${progressRate.toFixed(2)}%`;
+    $perSecInfo.textContent = `每秒赚：¥${params.moneyPerSec.toFixed(4)}`;
+    $progressPercent.textContent = `${progressRate.toFixed(2)}%`;
     $progressFill.style.width = `${progressRate}%`;
 
     if (inWork) {
@@ -480,17 +811,21 @@
     }
 
     updateDigitPanel(earnedMoney);
-    const remainMoney = Math.max(0, DAY_SALARY - earnedMoney);
-    $remainValue.textContent = "¥ " + remainMoney.toFixed(4);
-    $remainText.textContent = inWork ? "继续搬砖，早日下班" : "休息/下班时段，暂停赚钱";
+
+    const remainMoney = Math.max(0, params.daySalary - earnedMoney);
+    $remainValue.textContent = `¥ ${remainMoney.toFixed(4)}`;
+    $remainText.textContent = inWork
+      ? "继续搬砖，早日下班"
+      : "休息/下班时段，暂停赚钱";
 
     requestAnimationFrame(mainLoop);
   }
 
-  // 金色钞票粒子 60张，优化渲染减少手机GPU压力，高刷流畅
+  // ========== 钞票粒子背景 ==========
   const canvas = document.getElementById("moneyBg");
   const ctx = canvas.getContext("2d");
   let canvasW, canvasH;
+
   function resizeCanvas() {
     canvasW = canvas.width = window.innerWidth;
     canvasH = canvas.height = window.innerHeight;
@@ -539,15 +874,17 @@
       ctx.restore();
     }
   }
+
   const billList = [];
   for (let i = 0; i < 60; i++) billList.push(new MoneyBill());
+
   function renderBills() {
     ctx.clearRect(0, 0, canvasW, canvasH);
     billList.forEach(b => { b.update(); b.draw(); });
     requestAnimationFrame(renderBills);
   }
 
-  // 启动页面
+  // ========== 启动 ==========
   initDisplay();
   requestAnimationFrame(mainLoop);
   requestAnimationFrame(runDigitAnimation);
