@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>工位就是赚钱</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050508;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,215,0,0.16), transparent 45%),
+      linear-gradient(180deg, #030306 0%, #0a0805 100%);
+    font-family: "Orbitron", "Microsoft YaHei", system-ui, sans-serif;
+    color: #fff;
+    perspective: 1400px;
+  }
+
+  #moneyBg {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .screen {
+    position: relative;
+    z-index: 3;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 16px 36px;
+  }
+
+  .top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .time {
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #ffe699;
+    text-shadow: 0 0 8px rgba(255,215,0,0.45);
+    opacity: 0.85;
+  }
+
+  .status {
+    font-size: 14px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .status.working {
+    color: #ffd700;
+    border-color: rgba(255,215,0,0.4);
+    box-shadow: 0 0 14px rgba(255,215,0,0.3);
+  }
+
+  .status.resting {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.4);
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.2);
+  }
+
+  .center-title{
+    font-size:26px;
+    color:#ffd700;
+    letter-spacing:4px;
+    text-shadow:0 0 16px #ffd700;
+    margin-bottom:12px;
+  }
+  .per-sec-text{
+    font-size:14px;
+    color:#ffe699;
+    margin-bottom:20px;
+  }
+
+  .center {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .money-display {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotateX(8deg);
+    transform-style: preserve-3d;
+  }
+
+  .money-symbol {
+    font-size: 44px;
+    color: #ffd700;
+    text-shadow: 0 0 14px rgba(255,215,0,0.9);
+    margin-right: 4px;
+    transform: translateZ(30px);
+  }
+
+  .digit-window {
+    position: relative;
+    width: 40px;
+    height: 60px;
+    margin: 0 1px;
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255,215,0,0.12), rgba(255,215,0,0.02));
+    border: 1px solid rgba(255,215,0,0.35);
+    box-shadow:
+      inset 0 0 20px rgba(255,215,0,0.14),
+      0 10px 26px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    transform-style: preserve-3d;
+  }
+
+  .digit-window::before,
+  .digit-window::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 12px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .digit-window::before {
+    top: 0;
+    background: linear-gradient(180deg, rgba(5, 5, 8, 0.95), transparent);
+  }
+
+  .digit-window::after {
+    bottom: 0;
+    background: linear-gradient(0deg, rgba(5, 5, 8, 0.95), transparent);
+  }
+
+  .digit-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    will-change: transform;
+    transform-style: preserve-3d;
+  }
+
+  .digit-cell {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffd700;
+    text-shadow:
+      0 0 10px rgba(255,215,0,0.8),
+      0 0 22px rgba(255,215,0,0.4);
+    backface-visibility: hidden;
+  }
+
+  .dot {
+    font-size: 30px;
+    color: #ffd700;
+    text-shadow: 0 0 12px rgba(255,215,0,0.85);
+    transform: translateZ(24px);
+    animation: blink 1s infinite;
+    margin: 0 2px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .progress-wrap{
+    width: 80%;
+    max-width:340px;
+    margin-top:10px;
+  }
+  .progress-label{
+    font-size:13px;
+    color:#ffe699;
+    margin-bottom:4px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .progress-bar-bg{
+    width:100%;
+    height:8px;
+    background:rgba(255,255,255,0.1);
+    border-radius:99px;
+    overflow:hidden;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg,#ffb700,#ffd700);
+    border-radius:99px;
+    box-shadow:0 0 8px #ffd700;
+  }
+
+  .bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .remain-box {
+    width: 100%;
+    max-width: 340px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: rgba(255,215,0,0.06);
+    border: 1px solid rgba(255,215,0,0.25);
+    box-shadow: 0 0 20px rgba(255,215,0,0.12);
+    text-align: center;
+  }
+
+  .remain-label {
+    font-size: 14px;
+    color: #ffe699;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    opacity: 0.85;
+  }
+
+  .remain-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: #ffd700;
+    text-shadow: 0 0 12px rgba(255,215,0,0.8);
+  }
+
+  .remain-text {
+    font-size: 14px;
+    color: #ffe699;
+    margin-top: 8px;
+    line-height: 1.4;
+    opacity: 0.8;
+  }
+
+  .tip {
+    font-size: 12px;
+    color: #ffe699;
+    opacity: 0.6;
+    letter-spacing: 1px;
+  }
+
+  .glow-bar {
+    width: 75%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent,
+      rgba(255,215,0,0.7),
+      rgba(255,215,0,0.2),
+      transparent);
+    filter: blur(1px);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="moneyBg"></canvas>
+
+<div class="screen">
+  <div class="top">
+    <div class="time" id="nowTime">--</div>
+    <div class="status working" id="workState">工位赚钱中</div>
+  </div>
+
+  <div class="center">
+    <div class="center-title">工位就是赚钱</div>
+    <div class="per-sec-text" id="perSecInfo">每秒赚：¥0.0000</div>
+    <div class="money-display" id="moneyDisplay"></div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>今日工作进度</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="remain-box">
+      <div class="remain-label">今日剩余未赚</div>
+      <div class="remain-value" id="remainValue">¥ 909.0909</div>
+      <div class="remain-text" id="remainText">继续搬砖，早日下班</div>
+    </div>
+    <div class="glow-bar"></div>
+    <div class="tip">点击屏幕保持常亮</div>
+  </div>
+</div>
+
+<script>
+  // ========== 薪资配置参数 ==========
+  const MONTH_SALARY = 20000;
+  const WORK_DAY_MONTH = 22;
+  const DAY_SALARY = MONTH_SALARY / WORK_DAY_MONTH;
+  const TOTAL_WORK_SEC = 8 * 3600;
+  const MONEY_PER_SEC = DAY_SALARY / TOTAL_WORK_SEC;
+
+  // DOM元素
+  const $time = document.getElementById("nowTime");
+  const $state = document.getElementById("workState");
+  const $display = document.getElementById("moneyDisplay");
+  const $remainValue = document.getElementById("remainValue");
+  const $remainText = document.getElementById("remainText");
+  const $perSecInfo = document.getElementById("perSecInfo");
+  const $progressPercent = document.getElementById("progressPercent");
+  const $progressFill = document.getElementById("progressFill");
+
+  // 屏幕常亮
+  let wakeLock = null;
+  async function requestWakeLock() {
+    if ("wakeLock" in navigator) {
+      try {
+        wakeLock = await navigator.wakeLock.request("screen");
+      } catch (e) {}
+    }
+  }
+  document.addEventListener("click", requestWakeLock);
+  document.addEventListener("visibilitychange", () => {
+    if (wakeLock && document.visibilityState === "visible") requestWakeLock();
+  });
+
+  // 数字面板：3整数位 . 4小数位
+  const digitConfig = [
+    { type: "int", pos: 2 },
+    { type: "int", pos: 1 },
+    { type: "int", pos: 0 },
+    { type: "dot" },
+    { type: "dec", pos: 3 },
+    { type: "dec", pos: 2 },
+    { type: "dec", pos: 1 },
+    { type: "dec", pos: 0 }
+  ];
+  const digitWindows = [];
+
+  function initDisplay() {
+    const symbol = document.createElement("div");
+    symbol.className = "money-symbol";
+    symbol.textContent = "¥";
+    $display.appendChild(symbol);
+
+    digitConfig.forEach(cfg => {
+      if (cfg.type === "dot") {
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.textContent = ".";
+        $display.appendChild(dot);
+        return;
+      }
+      const win = document.createElement("div");
+      win.className = "digit-window";
+      const track = document.createElement("div");
+      track.className = "digit-track";
+      for (let i = 0; i < 10; i++) {
+        const cell = document.createElement("div");
+        cell.className = "digit-cell";
+        cell.textContent = i;
+        track.appendChild(cell);
+      }
+      win.appendChild(track);
+      $display.appendChild(win);
+      digitWindows.push({ cfg, win, track, currentIndex: 0, targetIndex: 0 });
+    });
+  }
+
+  // 核心：根据当前时分秒毫秒，计算当日累计有效工作秒
+  function getWorkSeconds(h, m, sMs) {
+    let totalSec = 0;
+    const nowSec = h * 3600 + m * 60 + sMs;
+
+    // 上午 08:00 - 12:00
+    const morningStart = 8 * 3600;
+    const morningEnd = 12 * 3600;
+    if (nowSec > morningStart) {
+      totalSec += Math.min(nowSec, morningEnd) - morningStart;
+    }
+
+    // 下午 13:30 -17:30
+    const afternoonStart = 13 * 3600 + 30 * 60;
+    const afternoonEnd = 17 * 3600 + 30 * 60;
+    if (nowSec > afternoonStart) {
+      totalSec += Math.min(nowSec, afternoonEnd) - afternoonStart;
+    }
+    return Math.min(totalSec, TOTAL_WORK_SEC);
+  }
+
+  function isWorkingHour(h, m) {
+    const totalMin = h * 60 + m;
+    const mStart = 8 * 60;
+    const mEnd = 12 * 60;
+    const aStart = 13 * 60 + 30;
+    const aEnd = 17 * 60 + 30;
+    return (totalMin >= mStart && totalMin < mEnd) || (totalMin >= aStart && totalMin < aEnd);
+  }
+
+  function updateDigitPanel(moneyVal) {
+    const fixedStr = moneyVal.toFixed(4);
+    const [intRaw, decRaw] = fixedStr.split(".");
+    const intStr = intRaw.padStart(3, "0");
+    const decStr = decRaw.padEnd(4, "0");
+    const digitsList = [...intStr.split(""), ".", ...decStr.split("")];
+    let ptr = 0;
+    digitWindows.forEach(dw => {
+      if (digitsList[ptr] === ".") { ptr++; return; }
+      dw.targetIndex = Number(digitsList[ptr]);
+      ptr++;
+    });
+  }
+
+  // 数字滚动动画，高刷无延迟
+  function runDigitAnimation() {
+    digitWindows.forEach(dw => {
+      if (dw.currentIndex === dw.targetIndex) return;
+      dw.currentIndex = dw.targetIndex;
+      const offsetY = -dw.targetIndex * 60;
+      dw.track.style.transition = "transform 80ms cubic-bezier(0.2,1,0.3,1)";
+      dw.track.style.transform = `translate3d(0, ${offsetY}px, 0)`;
+    });
+    requestAnimationFrame(runDigitAnimation);
+  }
+
+  // 主循环，和屏幕刷新率同步
+  function mainLoop() {
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes();
+    const s = now.getSeconds();
+    const ms = now.getMilliseconds();
+
+    $time.textContent = now.toLocaleString("zh-CN", {
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit"
+    }) + "." + String(ms).padStart(3, "0");
+
+    const inWork = isWorkingHour(h, m);
+    const workSecTotal = getWorkSeconds(h, m, s + ms / 1000);
+    const earnedMoney = workSecTotal * MONEY_PER_SEC;
+    const progressRate = (workSecTotal / TOTAL_WORK_SEC) * 100;
+
+    $perSecInfo.innerText = `每秒赚：¥${MONEY_PER_SEC.toFixed(4)}`;
+    $progressPercent.innerText = `${progressRate.toFixed(2)}%`;
+    $progressFill.style.width = `${progressRate}%`;
+
+    if (inWork) {
+      $state.textContent = "工位赚钱中";
+      $state.className = "status working";
+    } else {
+      $state.textContent = "工位已暂停";
+      $state.className = "status resting";
+    }
+
+    updateDigitPanel(earnedMoney);
+    const remainMoney = Math.max(0, DAY_SALARY - earnedMoney);
+    $remainValue.textContent = "¥ " + remainMoney.toFixed(4);
+    $remainText.textContent = inWork ? "继续搬砖，早日下班" : "休息/下班时段，暂停赚钱";
+
+    requestAnimationFrame(mainLoop);
+  }
+
+  // 金色钞票粒子 60张，优化渲染减少手机GPU压力，高刷流畅
+  const canvas = document.getElementById("moneyBg");
+  const ctx = canvas.getContext("2d");
+  let canvasW, canvasH;
+  function resizeCanvas() {
+    canvasW = canvas.width = window.innerWidth;
+    canvasH = canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  class MoneyBill {
+    constructor() { this.reset(true); }
+    reset(isInit) {
+      this.x = Math.random() * canvasW;
+      this.y = isInit ? Math.random() * canvasH : -100;
+      this.size = 18 + Math.random() * 36;
+      this.speedY = 0.45 + Math.random() * 1.6;
+      this.speedX = (Math.random() - 0.5) * 0.8;
+      this.rotate = Math.random() * Math.PI * 2;
+      this.rotateSpeed = (Math.random() - 0.5) * 0.045;
+      this.opacity = 0.3 + Math.random() * 0.45;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.rotate += this.rotateSpeed;
+      if (this.y > canvasH + 50) this.reset(false);
+    }
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotate);
+      ctx.globalAlpha = this.opacity;
+      const s = this.size;
+      const gradient = ctx.createLinearGradient(-s / 2, 0, s / 2, 0);
+      gradient.addColorStop(0, "#b8860b");
+      gradient.addColorStop(0.5, "#ffd700");
+      gradient.addColorStop(1, "#b8860b");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(-s / 2, -s / 3, s, s * 0.55);
+      ctx.strokeStyle = "#fff8dc";
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(-s / 2, -s / 3, s, s * 0.55);
+      ctx.fillStyle = "#fffbe0";
+      ctx.font = `bold ${s * 0.32}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("¥", 0, 2);
+      ctx.restore();
+    }
+  }
+  const billList = [];
+  for (let i = 0; i < 60; i++) billList.push(new MoneyBill());
+  function renderBills() {
+    ctx.clearRect(0, 0, canvasW, canvasH);
+    billList.forEach(b => { b.update(); b.draw(); });
+    requestAnimationFrame(renderBills);
+  }
+
+  // 启动页面
+  initDisplay();
+  requestAnimationFrame(mainLoop);
+  requestAnimationFrame(runDigitAnimation);
+  renderBills();
+</script>
+
+</body>
+</html>
